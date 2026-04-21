@@ -26,3 +26,24 @@
 - `release-index.md`
 - `candidates/`
 - `releases/`
+- `install-ai-team.sh`
+- `install-ai-team.ps1`
+- `stable-release.json`
+
+## Public Entry
+
+macOS:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/feng0932/playground-Version/main/install-ai-team.sh | bash
+```
+
+Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/feng0932/playground-Version/main/install-ai-team.ps1 -UseBasicParsing | iex"
+```
+
+Stable pointer:
+
+- `https://raw.githubusercontent.com/feng0932/playground-Version/main/stable-release.json`

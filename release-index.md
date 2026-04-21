@@ -17,4 +17,4 @@
 
 | version | channel | status | source_commit | artifact_root | release_note | notes |
 | --- | --- | --- | --- | --- | --- | --- |
-
+| `v0.4.1` | `release` | `exported` | `b5b850f283f1db569bf62670b8efdc9a20983ccd` | `releases/v0.4.1/` | `releases/v0.4.1/release-note.md` | exported from `Playground-English@b5b850f` |

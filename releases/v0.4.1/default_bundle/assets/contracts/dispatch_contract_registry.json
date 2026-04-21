@@ -1,0 +1,1034 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "dispatch_intent": "install_runtime_check",
+      "agent": "02-编排-安装与运行检查",
+      "role_prompt_source": "install/default_bundle/agents/02-编排-安装与运行检查.agent.md",
+      "dod": {
+        "required_closure_evidence_claims": [
+          "安装合同、运行状态和启动提示都已核对。",
+          "当前项目是否 ready / stale / blocked 已明确给出。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch"
+        ]
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "install-runtime-blocked",
+          "install-contract-missing",
+          "runtime-state-stale"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "project_package_initialization",
+      "agent": "01-编排-初始化项目包",
+      "role_prompt_source": "install/default_bundle/agents/01-编排-初始化项目包.agent.md",
+      "legacy_project_intake_contract": {
+        "required_input_anchors": [
+          "runtime_json",
+          "install_summary",
+          "structure_probe",
+          "bundle_catalog",
+          "project_package_baseline_files",
+          "project_execution_skeleton_state"
+        ],
+        "required_outputs": [
+          "legacy_project_type",
+          "project_entry_readiness",
+          "derivation_path_decision",
+          "minimal_repair_list"
+        ],
+        "decision_values": [
+          "历史项目首次接入",
+          "已接入历史项目但项目级入口不完整",
+          "已接入历史项目但派生骨架不完整",
+          "已接入历史项目且可继续进入主线"
+        ],
+        "missing_policy": "block_before_project_package_initialization"
+      },
+      "project_package_derivation_contract": {
+        "phase_one_truth_targets": [
+          "00-项目包/01-项目商业说明.md",
+          "00-项目包/02-用户画像与权限架构.md",
+          "00-项目包/03-系统拓扑与核心名词表.md"
+        ],
+        "phase_two_truth_targets": [
+          "01-模块执行包/",
+          "80-完整提交包/",
+          "AGENTS.md",
+          "docs/00-说明.md",
+          "docs/01-跨模块补充资料/README.md"
+        ],
+        "required_preconditions": [
+          "project_package_baselines_confirmed",
+          "delivery_mode_explicit"
+        ],
+        "validation_checks": [
+          "same_level_index_uniqueness",
+          "required_skeleton_completeness",
+          "fact_source_vs_delivery_view_boundary"
+        ],
+        "missing_policy": "block_before_execution_directory_derivation"
+      },
+      "dod": {
+        "required_closure_evidence_claims": [
+          "00-项目包基线已初始化。",
+          "项目级安装合同、结构探测和索引入口已齐备。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+        "task_chain_epoch"
+        ]
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "project-package-missing",
+          "project-package-index-missing",
+          "project-package-baseline-stale",
+          "legacy-project-intake-blocked",
+          "execution-directory-derivation-blocked"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "product_source_completion",
+      "agent": "10-执行-产品专家",
+      "role_prompt_source": "install/default_bundle/agents/10-执行-产品专家.agent.md",
+      "dod": {
+        "required_closure_evidence_claims": [
+          "命中专题时，专题基线包已进入派单输入包。",
+          "正式 PRD、页面合同清单和结构化契约字段清单已完成。",
+          "产品真源已可供后续执行链消费。"
+        ]
+      },
+      "topic_baseline_contract": {
+        "trigger_conditions": [
+          "topic_family_hit",
+          "cross_host_topic_rules",
+          "cross_module_topic_reuse",
+          "high_risk_topic_cannot_close_locally"
+        ],
+        "required_outputs": [
+          "current_project_topic_entry_index",
+          "topic_applicability_and_capability_trimming",
+          "linked_topic_entry_requirements",
+          "downstream_consumption_list",
+          "topic_gap_list"
+        ],
+        "downstream_consumers": [
+          "10-执行-产品专家",
+          "21-审查-产品审查",
+          "11-执行-管理后台原型专家",
+          "13-执行-手机端原型专家",
+          "14-执行-PC端原型专家"
+        ],
+        "missing_policy": "block_before_product_source_completion"
+      },
+      "account_baseline_contract": {
+        "trigger_conditions": [
+          "account_system",
+          "login_registration_or_personal_information_processing",
+          "sms_verification_or_real_name_verification",
+          "complaint_or_appeal_or_customer_service"
+        ],
+        "required_outputs": [
+          "current_project_account_baseline_entry",
+          "account_baseline_capability_trimming_table",
+          "prereview_required_checks",
+          "module_truth_required_capabilities",
+          "linked_topic_entry_requirements"
+        ],
+        "downstream_consumers": [
+          "10-执行-产品专家",
+          "21-审查-产品审查",
+          "11-执行-管理后台原型专家",
+          "13-执行-手机端原型专家",
+          "14-执行-PC端原型专家"
+        ],
+        "missing_policy": "block_before_product_source_completion"
+      },
+      "protocol_and_privacy_contract": {
+        "trigger_conditions": [
+          "protocol_or_privacy_consent",
+          "personal_information_processing",
+          "permission_request_or_denial_fallback",
+          "third_party_sharing_or_sdk",
+          "privacy_complaint_or_withdrawal_of_consent"
+        ],
+        "required_outputs": [
+          "current_project_protocol_and_privacy_entry",
+          "protocol_and_privacy_capability_trimming",
+          "linked_topic_entry_requirements",
+          "downstream_consumption_list",
+          "topic_gap_list"
+        ],
+        "downstream_consumers": [
+          "10-执行-产品专家",
+          "21-审查-产品审查",
+          "11-执行-管理后台原型专家",
+          "13-执行-手机端原型专家",
+          "14-执行-PC端原型专家"
+        ],
+        "missing_policy": "block_before_product_source_completion"
+      },
+      "real_name_contract": {
+        "trigger_conditions": [
+          "real_name_verification",
+          "identity_verification_or_manual_review",
+          "strong_identity_unlock",
+          "real_name_failure_or_retry_or_customer_service"
+        ],
+        "required_outputs": [
+          "current_project_real_name_entry",
+          "real_name_capability_trimming",
+          "linked_topic_entry_requirements",
+          "downstream_consumption_list",
+          "topic_gap_list"
+        ],
+        "downstream_consumers": [
+          "10-执行-产品专家",
+          "21-审查-产品审查",
+          "11-执行-管理后台原型专家",
+          "13-执行-手机端原型专家",
+          "14-执行-PC端原型专家"
+        ],
+        "missing_policy": "block_before_product_source_completion"
+      },
+      "user_governance_contract": {
+        "trigger_conditions": [
+          "freeze_or_ban_or_risk_control",
+          "complaint_or_report_or_appeal_or_customer_service",
+          "content_governance_or_infringement_clue",
+          "aigc_governance_or_manual_review"
+        ],
+        "required_outputs": [
+          "current_project_user_governance_entry",
+          "user_governance_capability_trimming",
+          "linked_topic_entry_requirements",
+          "downstream_consumption_list",
+          "topic_gap_list"
+        ],
+        "downstream_consumers": [
+          "10-执行-产品专家",
+          "21-审查-产品审查",
+          "11-执行-管理后台原型专家",
+          "13-执行-手机端原型专家",
+          "14-执行-PC端原型专家"
+        ],
+        "missing_policy": "block_before_product_source_completion"
+      },
+      "module_scheduling_contract": {
+        "trigger_conditions": [
+          "multi_active_modules",
+          "shared_prerequisite_detected",
+          "aggregation_or_recovery_module_requested",
+          "no_unique_legal_module_explicitly_specified"
+        ],
+        "required_input_anchors": [
+          "project_baseline_files",
+          "active_module_list",
+          "current_project_value_chain",
+          "cross_module_traceability"
+        ],
+        "required_outputs": [
+          "module_classification_result",
+          "priority_sequence_decision",
+          "first_module_decision",
+          "serial_pair_parallel_decision",
+          "not_first_module_list"
+        ],
+        "missing_policy": "block_before_product_source_completion"
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch"
+        ]
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "prd-missing",
+          "page-contract-missing",
+          "structured-contract-missing",
+          "topic-baseline-missing"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "prototype_admin_canvas_delivery",
+      "agent": "11-执行-管理后台原型专家",
+      "role_prompt_source": "install/default_bundle/agents/11-执行-管理后台原型专家.agent.md",
+      "dod": {
+        "required_closure_evidence_claims": [
+          "交付证据只允许来自产品画布 / 主工作区。",
+          "交付前必须完成盲截图测试。",
+          "桥接说明、评审标签、技术字段直出都不得作为交付证据。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch",
+          "closure_evidence_claims"
+        ],
+          "closure_evidence_claims_rule": "closure_evidence_claims 必须同时说明盲截图结果与清理结论。"
+      },
+      "product_reclaim_contract": {
+        "return_target": "10-执行-产品专家",
+        "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#4A-UIUE执行与产品收回记录",
+        "required_receipt_outputs": [
+          "uiue_structured_receipt",
+          "product_reclaim_decision",
+          "prd_ue_ui_consistency_verdict"
+        ],
+        "missing_policy": "block_before_project_or_delivery_greenlight"
+      },
+      "prototype_foundation_contract": {
+        "foundation_entry_path": "00-项目包/05-项目级原型与高保真标准.md",
+        "required_input_anchors": [
+          "current_project_prototype_foundation_entry",
+          "page_contract_list",
+          "structured_contract_field_list",
+          "existing_prototype_foundation_assets"
+        ],
+        "required_outputs": [
+          "prototype_foundation_reuse_decision",
+          "prototype_foundation_deliverables",
+          "prototype_foundation_gap_list"
+        ],
+        "missing_policy": "block_before_prototype_canvas_delivery"
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "prototype-admin-canvas-evidence",
+          "prototype-admin-blind-screenshot",
+          "prototype-admin-no-bridge-tech-fields"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "prototype_mobile_canvas_delivery",
+      "agent": "13-执行-手机端原型专家",
+      "role_prompt_source": "install/default_bundle/agents/13-执行-手机端原型专家.agent.md",
+      "dod": {
+        "required_closure_evidence_claims": [
+          "交付证据只允许来自产品画布 / 主工作区。",
+          "交付前必须完成盲截图测试。",
+          "桥接说明、评审标签、技术字段直出都不得作为交付证据。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch",
+          "closure_evidence_claims"
+        ],
+          "closure_evidence_claims_rule": "closure_evidence_claims 必须同时说明盲截图结果与清理结论。"
+      },
+      "product_reclaim_contract": {
+        "return_target": "10-执行-产品专家",
+        "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#4A-UIUE执行与产品收回记录",
+        "required_receipt_outputs": [
+          "uiue_structured_receipt",
+          "product_reclaim_decision",
+          "prd_ue_ui_consistency_verdict"
+        ],
+        "missing_policy": "block_before_project_or_delivery_greenlight"
+      },
+      "prototype_foundation_contract": {
+        "foundation_entry_path": "00-项目包/05-项目级原型与高保真标准.md",
+        "required_input_anchors": [
+          "current_project_prototype_foundation_entry",
+          "page_contract_list",
+          "structured_contract_field_list",
+          "existing_prototype_foundation_assets"
+        ],
+        "required_outputs": [
+          "prototype_foundation_reuse_decision",
+          "prototype_foundation_deliverables",
+          "prototype_foundation_gap_list"
+        ],
+        "missing_policy": "block_before_prototype_canvas_delivery"
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "prototype-mobile-canvas-evidence",
+          "prototype-mobile-blind-screenshot",
+          "prototype-mobile-no-bridge-tech-fields"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "prototype_pc_canvas_delivery",
+      "agent": "14-执行-PC端原型专家",
+      "role_prompt_source": "install/default_bundle/agents/14-执行-PC端原型专家.agent.md",
+      "dod": {
+        "required_closure_evidence_claims": [
+          "交付证据只允许来自产品画布 / 主工作区。",
+          "交付前必须完成盲截图测试。",
+          "桥接说明、评审标签、技术字段直出都不得作为交付证据。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch",
+          "closure_evidence_claims"
+        ],
+          "closure_evidence_claims_rule": "closure_evidence_claims 必须同时说明盲截图结果与清理结论。"
+      },
+      "product_reclaim_contract": {
+        "return_target": "10-执行-产品专家",
+        "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#4A-UIUE执行与产品收回记录",
+        "required_receipt_outputs": [
+          "uiue_structured_receipt",
+          "product_reclaim_decision",
+          "prd_ue_ui_consistency_verdict"
+        ],
+        "missing_policy": "block_before_project_or_delivery_greenlight"
+      },
+      "prototype_foundation_contract": {
+        "foundation_entry_path": "00-项目包/05-项目级原型与高保真标准.md",
+        "required_input_anchors": [
+          "current_project_prototype_foundation_entry",
+          "page_contract_list",
+          "structured_contract_field_list",
+          "existing_prototype_foundation_assets"
+        ],
+        "required_outputs": [
+          "prototype_foundation_reuse_decision",
+          "prototype_foundation_deliverables",
+          "prototype_foundation_gap_list"
+        ],
+        "missing_policy": "block_before_prototype_canvas_delivery"
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "prototype-pc-canvas-evidence",
+          "prototype-pc-blind-screenshot",
+          "prototype-pc-no-bridge-tech-fields"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "gate_review",
+      "agent": "20-审查-门禁审查",
+      "role_prompt_source": "install/default_bundle/agents/20-审查-门禁审查.agent.md",
+      "dod": {
+        "required_closure_evidence_claims": [
+          "门禁审查已完成。",
+          "blocker_scope 已可复核。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch"
+        ]
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "gate-blocked",
+          "contract-blocked",
+          "truth-boundary-blocked"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "product_review",
+      "agent": "21-审查-产品审查",
+      "role_prompt_source": "install/default_bundle/agents/21-审查-产品审查.agent.md",
+      "review_scope_values": [
+        "prototype_entry",
+        "module_entity",
+        "project_linkage",
+        "delivery_readiness"
+      ],
+      "scope_matrix": {
+        "prototype_entry": {
+          "required_input_anchors": [
+            "prd_body",
+            "4_2a_critical_rule_freeze",
+            "4_3_page_contracts",
+            "4_4_structured_contract_fields",
+            "module_flow_human_confirmation_doc"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#前置审查正式回执",
+          "stop_conditions": [
+            "current_scope_findings_recorded",
+            "next_hop_or_return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "structure_gate_blocked",
+            "product_truth_gap",
+            "illegal_scope_jump"
+          ]
+        },
+        "module_entity": {
+          "required_input_anchors": [
+            "prd_body",
+            "4_2a_critical_rule_freeze",
+            "4_3_page_contracts",
+            "4_4_structured_contract_fields",
+            "product_review_receipt"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#模块级产品审查回执",
+          "stop_conditions": [
+            "module_level_semantic_findings_recorded",
+            "return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "product_truth_gap",
+            "acceptance_semantics_missing",
+            "illegal_scope_jump"
+          ]
+        },
+        "project_linkage": {
+          "required_input_anchors": [
+            "prd_body",
+            "merged_prd_reading_layer",
+            "cross_module_traceability",
+            "module_level_review_receipts"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#项目级产品审查回执",
+          "stop_conditions": [
+            "project_linkage_findings_recorded",
+            "return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "cross_module_conflict",
+            "traceability_gap",
+            "illegal_scope_jump"
+          ]
+        },
+        "delivery_readiness": {
+          "required_input_anchors": [
+            "prd_body",
+            "merged_prd_reading_layer",
+            "engineering_handoff_checklist",
+            "unresolved_issue_ledger"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#交付级产品审查回执",
+          "stop_conditions": [
+            "delivery_readiness_findings_recorded",
+            "scope_specific_next_hop_explicit"
+          ],
+          "hard_fail_conditions": [
+            "engineering_handoff_truth_gap",
+            "unresolved_blocking_issue",
+            "illegal_scope_jump"
+          ]
+        }
+      },
+      "account_baseline_review_contract": {
+        "trigger_conditions": [
+          "account_system",
+          "login_registration_or_personal_information_processing",
+          "sms_verification_or_real_name_verification",
+          "complaint_or_appeal_or_customer_service"
+        ],
+        "applies_to_review_scopes": [
+          "prototype_entry",
+          "module_entity"
+        ],
+        "required_input_anchors": [
+          "current_project_account_baseline_entry",
+          "account_baseline_capability_trimming_table",
+          "prereview_required_checks"
+        ],
+        "missing_policy": "block_before_prototype_entry",
+        "return_target": "10-执行-产品专家"
+      },
+      "protocol_and_privacy_review_contract": {
+        "trigger_conditions": [
+          "protocol_or_privacy_consent",
+          "personal_information_processing",
+          "permission_request_or_denial_fallback",
+          "third_party_sharing_or_sdk",
+          "privacy_complaint_or_withdrawal_of_consent"
+        ],
+        "applies_to_review_scopes": [
+          "prototype_entry",
+          "module_entity"
+        ],
+        "required_input_anchors": [
+          "current_project_protocol_and_privacy_entry",
+          "protocol_and_privacy_capability_trimming",
+          "linked_topic_entry_requirements"
+        ],
+        "missing_policy": "block_before_prototype_entry",
+        "return_target": "10-执行-产品专家"
+      },
+      "real_name_review_contract": {
+        "trigger_conditions": [
+          "real_name_verification",
+          "identity_verification_or_manual_review",
+          "strong_identity_unlock",
+          "real_name_failure_or_retry_or_customer_service"
+        ],
+        "applies_to_review_scopes": [
+          "prototype_entry",
+          "module_entity"
+        ],
+        "required_input_anchors": [
+          "current_project_real_name_entry",
+          "real_name_capability_trimming",
+          "linked_topic_entry_requirements"
+        ],
+        "missing_policy": "block_before_prototype_entry",
+        "return_target": "10-执行-产品专家"
+      },
+      "user_governance_review_contract": {
+        "trigger_conditions": [
+          "freeze_or_ban_or_risk_control",
+          "complaint_or_report_or_appeal_or_customer_service",
+          "content_governance_or_infringement_clue",
+          "aigc_governance_or_manual_review"
+        ],
+        "applies_to_review_scopes": [
+          "prototype_entry",
+          "module_entity"
+        ],
+        "required_input_anchors": [
+          "current_project_user_governance_entry",
+          "user_governance_capability_trimming",
+          "linked_topic_entry_requirements"
+        ],
+        "missing_policy": "block_before_prototype_entry",
+        "return_target": "10-执行-产品专家"
+      },
+      "dod": {
+        "required_closure_evidence_claims": [
+          "产品审查已完成。",
+          "产品真源、闭环与风险承接已可复核。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch"
+        ]
+      },
+      "blocker_scope": {
+        "gate_fail_semantics": "same_stage_rework_required",
+        "blocker_policy": "non_overridable",
+        "blocking_issue_ids": [
+          "product-blocked",
+          "prd-truth-gap",
+          "product-review-gap"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "prototype_review",
+      "agent": "22-审查-原型审查",
+      "role_prompt_source": "install/default_bundle/agents/22-审查-原型审查.agent.md",
+      "review_scope_values": [
+        "module_entity",
+        "project_linkage",
+        "delivery_readiness"
+      ],
+      "scope_matrix": {
+        "module_entity": {
+          "required_input_anchors": [
+            "prototype_canvas_truth",
+            "page_contract_list",
+            "structured_contract_field_list"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#模块级原型审查回执",
+          "stop_conditions": [
+            "prototype_findings_recorded",
+            "return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "canvas_evidence_gap",
+            "blind_screenshot_gap",
+            "illegal_scope_jump"
+          ]
+        },
+        "project_linkage": {
+          "required_input_anchors": [
+            "prototype_canvas_truth",
+            "merged_prd_reading_layer",
+            "cross_module_traceability"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#项目级原型审查回执",
+          "stop_conditions": [
+            "prototype_linkage_findings_recorded",
+            "return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "cross_module_interaction_break",
+            "state_handoff_gap",
+            "illegal_scope_jump"
+          ]
+        },
+        "delivery_readiness": {
+          "required_input_anchors": [
+            "prototype_canvas_truth",
+            "engineering_handoff_checklist",
+            "unresolved_issue_ledger"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#交付级原型审查回执",
+          "stop_conditions": [
+            "prototype_delivery_findings_recorded",
+            "scope_specific_next_hop_explicit"
+          ],
+          "hard_fail_conditions": [
+            "delivery_canvas_evidence_gap",
+            "prototype_impl_risk_unresolved",
+            "illegal_scope_jump"
+          ]
+        }
+      },
+      "prototype_foundation_review_contract": {
+        "trigger_conditions": [
+          "prototype_foundation_hit",
+          "cross_page_reusable_shell_or_components",
+          "existing_foundation_compatibility_uncertain"
+        ],
+        "required_input_anchors": [
+          "current_project_prototype_foundation_entry",
+          "prototype_foundation_reuse_decision",
+          "prototype_foundation_deliverables",
+          "prototype_foundation_gap_list"
+        ],
+        "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#3A-原型底座记录",
+        "missing_policy": "block_before_module_or_delivery_greenlight"
+      },
+      "uiue_reclaim_review_contract": {
+        "trigger_conditions": [
+          "uiue_execution_round",
+          "prototype_handoff_back_to_product"
+        ],
+        "required_input_anchors": [
+          "uiue_structured_receipt",
+          "product_reclaim_decision",
+          "prd_ue_ui_consistency_verdict"
+        ],
+        "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#4A-UIUE执行与产品收回记录",
+        "missing_policy": "block_before_module_or_delivery_greenlight",
+        "return_target": "10-执行-产品专家"
+      },
+      "dod": {
+        "required_closure_evidence_claims": [
+          "原型审查已完成。",
+          "原型交付链、真机审校与回执可复核。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch"
+        ]
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "prototype-review-blocked",
+          "canvas-evidence-gap",
+          "blind-screenshot-gap"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "reverse_review",
+      "agent": "23-审查-反向审查",
+      "role_prompt_source": "install/default_bundle/agents/23-审查-反向审查.agent.md",
+      "review_scope_values": [
+        "module_entity",
+        "project_linkage",
+        "delivery_readiness"
+      ],
+      "scope_matrix": {
+        "module_entity": {
+          "required_input_anchors": [
+            "prd_body",
+            "prototype_canvas_truth",
+            "module_truth_sources"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#模块级反向审查回执",
+          "stop_conditions": [
+            "reverse_findings_recorded",
+            "return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "module_truth_conflict",
+            "negative_case_gap",
+            "illegal_scope_jump"
+          ]
+        },
+        "project_linkage": {
+          "required_input_anchors": [
+            "merged_prd_reading_layer",
+            "cross_module_traceability",
+            "project_level_review_receipts"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#项目级反向审查回执",
+          "stop_conditions": [
+            "project_reverse_findings_recorded",
+            "return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "cross_module_conflict",
+            "boundary_gap",
+            "illegal_scope_jump"
+          ]
+        },
+        "delivery_readiness": {
+          "required_input_anchors": [
+            "engineering_handoff_checklist",
+            "unresolved_issue_ledger",
+            "delivery_truth_sources"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#交付级反向审查回执",
+          "stop_conditions": [
+            "delivery_reverse_findings_recorded",
+            "scope_specific_next_hop_explicit"
+          ],
+          "hard_fail_conditions": [
+            "delivery_truth_conflict",
+            "return_flow_missing",
+            "illegal_scope_jump"
+          ]
+        }
+      },
+      "dod": {
+        "required_closure_evidence_claims": [
+          "反向审查已完成。",
+          "负例、边界条件与回退风险已可复核。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch"
+        ]
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "reverse-review-blocked",
+          "negative-case-gap",
+          "boundary-gap"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "cross_role_prereview",
+      "agent": "24-审查-跨角色预审",
+      "role_prompt_source": "install/default_bundle/agents/24-审查-跨角色预审.agent.md",
+      "dod": {
+        "required_closure_evidence_claims": [
+          "跨角色预审已完成。",
+          "角色边界、协作链路与冲突点已可复核。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch"
+        ]
+      },
+      "issue_ticket_contract": {
+        "formal_output_anchor": "assets/templates/31-结果-跨角色预审讨论清单.md#10-汇总收口",
+        "required_fields": [
+          "issue_id",
+          "origin_step",
+          "origin_review_scope",
+          "origin_module_or_batch",
+          "affected_roles",
+          "risk_type",
+          "problem_statement",
+          "evidence_anchor",
+          "currently_blocked_object",
+          "required_response",
+          "reply_owner",
+          "reply_due_at",
+          "writeback_target",
+          "return_target"
+        ],
+        "single_primary_return_target": true
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "cross-role-prereview-blocked",
+          "boundary-mismatch",
+          "role-collision"
+        ]
+      }
+    },
+    {
+      "dispatch_intent": "test_review",
+      "agent": "25-审查-测试专家",
+      "role_prompt_source": "install/default_bundle/agents/25-审查-测试专家.agent.md",
+      "review_scope_values": [
+        "module_entity",
+        "project_linkage",
+        "delivery_readiness"
+      ],
+      "scope_matrix": {
+        "module_entity": {
+          "required_input_anchors": [
+            "prd_body",
+            "prototype_canvas_truth",
+            "test_case_pack"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#模块级测试审查回执",
+          "stop_conditions": [
+            "testability_findings_recorded",
+            "return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "verification_gap",
+            "regression_gap",
+            "illegal_scope_jump"
+          ]
+        },
+        "project_linkage": {
+          "required_input_anchors": [
+            "merged_prd_reading_layer",
+            "cross_module_traceability",
+            "test_case_pack"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#项目级测试审查回执",
+          "stop_conditions": [
+            "project_testability_findings_recorded",
+            "return_target_explicit"
+          ],
+          "hard_fail_conditions": [
+            "cross_module_regression_gap",
+            "verification_gap",
+            "illegal_scope_jump"
+          ]
+        },
+        "delivery_readiness": {
+          "required_input_anchors": [
+            "engineering_handoff_checklist",
+            "unresolved_issue_ledger",
+            "test_case_pack"
+          ],
+          "formal_output_anchor": "assets/templates/30-结果-AI深审记录模板.md#交付级测试审查回执",
+          "stop_conditions": [
+            "delivery_testability_findings_recorded",
+            "scope_specific_next_hop_explicit"
+          ],
+          "hard_fail_conditions": [
+            "delivery_verification_gap",
+            "release_regression_gap",
+            "illegal_scope_jump"
+          ]
+        }
+      },
+      "dod": {
+        "required_closure_evidence_claims": [
+          "测试审查已完成。",
+          "验证证据、回归范围与阻塞项已可复核。"
+        ]
+      },
+      "receipt_contract": {
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "required_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch"
+        ]
+      },
+      "blocker_scope": {
+        "blocking_issue_ids": [
+          "test-review-blocked",
+          "verification-gap",
+          "regression-gap"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,271 @@
+version: 1
+document_id: product_structure_constraints
+scope: product_role_structure_gate
+artifact_meta:
+  artifact_id: organization_product_structure_constraints
+  artifact_role: product_structure_constraints
+  layer: organization_rule_layer_v1
+  lifecycle_status: current
+  managed_in_lane: organization_continuation_items
+  startup_entry_guide: 00-执行SOP.md
+
+artifact_registry:
+  module_flow_human_confirmation_doc:
+    artifact_id: module_flow_human_confirmation_doc
+    owner_role: PM
+    required_relative_path: 01-模块执行包/<模块名>/01-PRD/02-模块流程图与人类确认.md
+    allowed_path_pattern:
+      - 01-模块执行包/**/01-PRD/02-模块流程图与人类确认.md
+    allowed_file_type:
+      - md
+    semantic_check_profile: module_flow_human_confirmation_doc
+    na_policy: forbidden
+  merged_prd_reading_layer:
+    artifact_id: merged_prd_reading_layer
+    owner_role: 总控
+    required_relative_path: 80-完整提交包/01-合并PRD/01-合并PRD阅读层.md
+    activation_contract: 已启用完整提交阅读层
+    allowed_path_pattern:
+      - 80-完整提交包/01-合并PRD/01-合并PRD阅读层.md
+    allowed_file_type:
+      - md
+    semantic_check_profile: reading_layer_document
+    na_policy: explicit_justified_na_allowed
+  current_project_account_baseline_entry:
+    artifact_id: current_project_account_baseline_entry
+    owner_role: PM
+    required_relative_path: 00-项目包/02-用户画像与权限架构.md
+    required_section_headings:
+      - 当前项目账号基线入口
+      - 账号基线能力裁剪表
+      - 前置审查必查项
+    allowed_path_pattern:
+      - 00-项目包/02-用户画像与权限架构.md
+    allowed_file_type:
+      - md
+    semantic_check_profile: current_project_account_baseline_entry
+    na_policy: forbidden
+  current_project_protocol_and_privacy_entry:
+    artifact_id: current_project_protocol_and_privacy_entry
+    owner_role: PM
+    required_relative_path: 00-项目包/04-开发前合规附录.md
+    required_section_headings:
+      - 当前项目协议与隐私入口
+      - 协议与隐私适用范围与能力裁剪结果
+      - 联动专题入口要求
+    allowed_path_pattern:
+      - 00-项目包/04-开发前合规附录.md
+    allowed_file_type:
+      - md
+    semantic_check_profile: current_project_protocol_and_privacy_entry
+    na_policy: forbidden
+  current_project_real_name_entry:
+    artifact_id: current_project_real_name_entry
+    owner_role: PM
+    required_relative_path: 00-项目包/04-开发前合规附录.md
+    required_section_headings:
+      - 当前项目实名入口
+      - 实名适用范围与能力裁剪结果
+      - 联动专题入口要求
+    allowed_path_pattern:
+      - 00-项目包/04-开发前合规附录.md
+    allowed_file_type:
+      - md
+    semantic_check_profile: current_project_real_name_entry
+    na_policy: forbidden
+  current_project_user_governance_entry:
+    artifact_id: current_project_user_governance_entry
+    owner_role: PM
+    required_relative_path: 00-项目包/04-开发前合规附录.md
+    required_section_headings:
+      - 当前项目用户治理入口
+      - 用户治理适用范围与能力裁剪结果
+      - 联动专题入口要求
+    allowed_path_pattern:
+      - 00-项目包/04-开发前合规附录.md
+    allowed_file_type:
+      - md
+    semantic_check_profile: current_project_user_governance_entry
+    na_policy: forbidden
+
+document_structure_standards:
+  draft:
+    required_outputs:
+      - prd_skeleton
+      - requirement_list
+      - scope_boundary
+      - acceptance_draft
+      - module_flow_human_confirmation_doc
+    conditional_outputs:
+      - page_contract_list
+      - structured_contract_field_list
+  in_review:
+    required_outputs:
+      - review_version_prd
+      - issue_response_record
+      - business_tradeoff_note
+    conditional_outputs:
+      - merged_prd_reading_layer
+  approved:
+    required_outputs:
+      - approval_record
+      - approved_prd
+      - unresolved_item_resolution
+    conditional_outputs: []
+  frozen:
+    required_outputs:
+      - freeze_notice
+      - baseline_note
+      - change_decision_record
+    conditional_outputs: []
+  obsolete:
+    required_outputs:
+      - obsolete_notice
+      - replacement_version_note
+    conditional_outputs: []
+
+conditional_requirements:
+  module_flow_human_confirmation_required_before_prototype:
+    trigger_scope: prototype_entry
+    required_artifact: module_flow_human_confirmation_doc
+    rule: prototype entry must fail closed until module-flow supporting doc is present
+  high_risk_trigger_registry_present:
+    trigger_scope: prototype_entry
+    required_sections:
+      - 4.2A
+      - high_risk_trigger_registry
+  account_baseline_required_before_account_design_or_review:
+    trigger_scope: prototype_entry
+    trigger_conditions:
+      - account_system
+      - login_registration_or_personal_information_processing
+      - sms_verification_or_real_name_verification
+      - complaint_or_appeal_or_customer_service
+    required_artifact: current_project_account_baseline_entry
+    required_sections:
+      - 账号基线能力裁剪表
+      - 前置审查必查项
+    rule: prototype entry must fail closed until account baseline entry is present when account or personal-information scenarios are hit
+  protocol_and_privacy_required_before_personal_information_design_or_review:
+    trigger_scope: prototype_entry
+    trigger_conditions:
+      - personal_information_processing
+      - protocol_or_privacy_consent
+      - third_party_sharing_or_sdk
+      - privacy_complaint_or_withdrawal_of_consent
+    required_artifact: current_project_protocol_and_privacy_entry
+    required_sections:
+      - 协议与隐私适用范围与能力裁剪结果
+      - 联动专题入口要求
+    rule: prototype entry must fail closed until protocol/privacy entry is present when agreement, privacy, permission or sharing scenarios are hit
+  real_name_required_before_strong_identity_design_or_review:
+    trigger_scope: prototype_entry
+    trigger_conditions:
+      - real_name_verification
+      - strong_identity_unlock
+      - identity_verification_failure_or_appeal
+    required_artifact: current_project_real_name_entry
+    required_sections:
+      - 实名适用范围与能力裁剪结果
+      - 联动专题入口要求
+    rule: prototype entry must fail closed until real-name entry is present when strong-identity scenarios are hit
+  user_governance_required_before_governance_design_or_review:
+    trigger_scope: prototype_entry
+    trigger_conditions:
+      - freeze_or_ban_or_risk_control
+      - complaint_or_report_or_appeal_or_customer_service
+      - content_governance_or_aigc_governance
+    required_artifact: current_project_user_governance_entry
+    required_sections:
+      - 用户治理适用范围与能力裁剪结果
+      - 联动专题入口要求
+    rule: prototype entry must fail closed until user-governance entry is present when governance scenarios are hit
+  merged_prd_reading_layer_enabled:
+    trigger_scope: project_linkage
+    required_artifact: merged_prd_reading_layer
+    activation_contract: 已启用完整提交阅读层
+
+review_scope_requirements:
+  prototype_entry:
+    required_input_anchors:
+      - prd_body
+      - 4_2a_critical_rule_freeze
+      - 4_3_page_contracts
+      - 4_4_structured_contract_fields
+      - module_flow_human_confirmation_doc
+      - product_review_receipt
+    required_checks:
+      - document_required_fields_complete
+      - prototype_chain_product_review_receipt_present_when_applicable
+      - page_contracts_and_interaction_prototype_must_map_one_to_one_by_page_id
+      - module_flow_human_confirmation_required_before_prototype
+  module_entity:
+    required_input_anchors:
+      - prd_body
+      - 4_3_page_contracts
+      - 4_4_structured_contract_fields
+      - product_review_receipt
+    required_checks:
+      - structured_contract_fields_reference_existing_page_contracts_when_present
+      - page_contracts_generic_terminal_type_is_requirements_only
+  project_linkage:
+    required_input_anchors:
+      - merged_prd_reading_layer
+      - cross_module_traceability
+      - module_level_review_receipts
+    required_checks:
+      - cross_module_traceability_complete
+      - merged_prd_reading_layer_enabled
+  delivery_readiness:
+    required_input_anchors:
+      - engineering_handoff_checklist
+      - unresolved_issue_ledger
+      - merged_prd_reading_layer
+    engineering_handoff_truth_artifacts:
+      - engineering_handoff_checklist
+      - unresolved_issue_ledger
+      - fe_truth_source
+      - be_truth_source
+      - qa_truth_source
+      - dba_truth_source
+      - ops_truth_source
+      - pm_module_diagram
+      - state_flow_diagram
+      - timeout_policy
+      - retry_or_compensation_policy
+      - lifecycle_matrix
+      - retention_rule
+      - cleanup_owner
+      - role_matrix
+      - data_scope_rule
+      - audit_rule
+      - status_transition_diagram
+      - legacy_migration_record
+
+gate_b_templates:
+  - 37-模板-工程交接职责矩阵.md
+  - 38-模板-工程交接门槛清单.md
+
+handoff_gate_requirements:
+  required_artifacts:
+    - engineering_handoff_checklist
+    - unresolved_issue_ledger
+    - fe_truth_source
+    - be_truth_source
+    - qa_truth_source
+    - dba_truth_source
+    - ops_truth_source
+    - pm_module_diagram
+    - state_flow_diagram
+    - timeout_policy
+    - retry_or_compensation_policy
+    - lifecycle_matrix
+    - retention_rule
+    - cleanup_owner
+    - role_matrix
+    - data_scope_rule
+    - audit_rule
+    - status_transition_diagram
+    - legacy_migration_record
+  chinese_first_human_facing_text_required: true
+  be_state_truth_cannot_substitute_pm_module_diagram: true

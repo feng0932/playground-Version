@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "channel": "stable",
+  "bundle_version": "v0.4.1",
+  "bundle_source": "github-release",
+  "tag": "ai-team-bundle-v0.4.1",
+  "tarball_url": "https://github.com/feng0932/playground-Version/releases/download/ai-team-bundle-v0.4.1/ai-team-bundle-v0.4.1.tar.gz",
+  "manifest_url": "https://github.com/feng0932/playground-Version/releases/download/ai-team-bundle-v0.4.1/ai-team-bundle-v0.4.1.manifest.json",
+  "installer_archive_url": "https://github.com/feng0932/playground-Version/releases/download/ai-team-bundle-v0.4.1/ai-team-bundle-v0.4.1-installer.tar.gz",
+  "installer_archive_sha256": "367672e3c9ff73b4ea129bfe93de04870630ffd90a1f88bc0c2a26d29ba8ce74",
+  "bundle_sha256": "68bd4d0dc2174834967ed7d1260d8dfba9a8389c679b3c85db2f18a5f978013a"
+}
