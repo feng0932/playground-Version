@@ -1,26 +1,33 @@
 # ai-team-bundle v0.4.2 版本说明
 
-`v0.4.2` 是基于 `v0.4.1` 的正式稳定发布版本。
+`v0.4.2` 是基于 `v0.4.1` 的正式稳定发布版本；本次执行属于 `v0.4.2` 的同版本热更覆盖。
 
 如果用一句话概括这次变化：
 
-**`v0.4.2` 主要完成方法论真源重构的正式版本收口，把当前正式 bundle、stable pointer、release note 与发布资产统一切到新版本号，并作为新的稳定公开版本发布。**
+**`v0.4.2` 这次不是新开版本，而是在保持版本号不变的前提下，覆盖既有 `ai-team-bundle-v0.4.2` 发布面，收口残留的 primary-window quiet surface 与线程控制动作修复。**
 
 ## 版本定位
 
 - `v0.4.1` 是上一轮对外稳定版本。
 - `v0.4.2` 是承接当前方法论真源重构与发布链收口的正式版本。
+- 本次动作不新增 `v0.4.3`，而是对既有 `v0.4.2` 做同版本热更覆盖。
 - 新安装与后续默认 stable 更新，发布后都以 `v0.4.2` 为准。
 
 ## 本次变化
 
-### 1. 正式版本面切到 `v0.4.2`
+### 1. 同版本热更覆盖 `v0.4.2` 既有发布面
+
+- 保持 `bundle_version = v0.4.2` 与 `tag = ai-team-bundle-v0.4.2` 不变。
+- 对既有 GitHub Release 五件套资产与公开 `stable-release.json` 做整套覆盖，不做增量补丁。
+- 这次覆盖的目标是收口 `v0.4.2` 残留问题，不扩出新版本号。
+
+### 2. 正式版本面仍锚定 `v0.4.2`
 
 - `install/default_bundle/manifest.json` 的 `bundle_version` 已切到 `v0.4.2`。
 - `install/stable-release.json` 已与 `v0.4.2` 正式 release metadata 对齐。
 - `ai-team-bundle-v0.4.2-release-note.md` 已补齐为当前正式 release note carrier。
 
-### 2. 正式发布资产已齐备
+### 3. 正式发布资产已齐备
 
 - 正式 tag 名称：
   - `ai-team-bundle-v0.4.2`
@@ -32,7 +39,13 @@
   - `ai-team-bundle-v0.4.2.sha256`
   - `stable-release.json`
 
-### 3. 发布前置证据已完成收口
+### 4. 本次热更覆盖的主修改
+
+- `00 / 01 / 10` 的 primary-window 交互链完成 quiet human-visible surface 收口。
+- `machine receipt carrier` 已正式 materialize，不再把 `工单回执 / dispatch_evidence` 直接暴露到对人正文。
+- `/总控 / 返回总控 / 读取回执` 的线程控制动作合同已写入 prompt、contract、builder 与 repo memory。
+
+### 5. 发布前置证据已完成收口
 
 - 当前版本的窄链裁决测试与 freeze snapshot 已同步到 `v0.4.2` 语义。
 - 发布与后续复核可直接消费：
@@ -45,11 +58,13 @@
 ## 影响范围
 
 - 影响：
+  - `v0.4.2` 已公开发布面的五件套资产内容与 checksum
   - `ai-team install` 的本地默认 bundle 版本语义
   - tracked stable release metadata
   - 正式安装与更新提示词
   - 正式发布资产校验与审查输入包
 - 不影响：
+  - `bundle_version` 与 `release tag` 仍保持 `v0.4.2`
   - `v0.4.1` 已对外发布的 GitHub Release 事实
   - 历史 release note 与历史版本目录
   - 非本轮 release-prep 范围内的治理文档结论
@@ -62,10 +77,10 @@
 cd /Users/mac/Documents/Playground-English/dev
 python3 -m unittest tests.test_release_bundle -q
 python3 -m unittest tests.test_bootstrap_smoke -q
-python3 -m unittest tests.test_default_bundle -q
-python3 -m unittest tests.test_min_install -q
-python3 -m unittest tests.test_version_governance -q
-python3 -m unittest tests.test_launch_judgment_narrow_chain -q
+cd /Users/mac/Documents/Playground-English
+uv run --with pytest --with pyyaml pytest dev/tests/test_default_bundle.py -q
+uv run --with pytest --with pyyaml pytest dev/tests/test_dispatch_prompt_builder.py -q
+uv run --with pytest --with pyyaml pytest dev/tests/test_total_control_contracts.py -q
 ```
 
 本轮还执行了正式安装链验证，重点检查：
@@ -86,11 +101,11 @@ python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 - 当前发布阶段：
   - `published`
 - 最终正式发布动作：
-  - 已执行 `git tag / git push / gh release create`
+  - 本次执行保持既有 `ai-team-bundle-v0.4.2` 版本号不变，覆盖既有 GitHub Release 资产、发布仓投影与公开 stable pointer。
 - GitHub Release：
   - `https://github.com/feng0932/playground-Version/releases/tag/ai-team-bundle-v0.4.2`
 - release URL 可访问性：
-  - 正式发布后已完成抽样验证
+  - 同版本覆盖完成后需重新完成抽样验证
 
 正式远端安装入口（发布后使用）：
 
@@ -104,9 +119,9 @@ python3 -m unittest tests.test_launch_judgment_narrow_chain -q
   - `https://github.com/feng0932/playground-Version/releases/download/ai-team-bundle-v0.4.2/ai-team-bundle-v0.4.2.release.json`
 
 - bundle SHA256：
-  - `8f5b95676596d1592615d22d357540817c93d5541822786d158baa3556d33bc4`
+  - `799b729b5f111f1dee8a43301a6d72bff4e37c34ec91c63ade585e04cb5f0cb1`
 - installer archive SHA256：
-  - `19cd00507b538e82aa59abe683bd9d6f0e198a5ebf28a12ef1a131ad527077ca`
+  - `6e925bd505f485068a86cb13f158cfaebafe70c0d452f1c8c5004c32c0dce257`
 
 ## 给大模型的继续执行提示
 
@@ -128,10 +143,8 @@ python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 
 当前版本已进入的正式状态：
 
-- `v0.4.2` 已进入 GitHub Release published 状态
-- 正式发布资产已上传
-- 正式 stable pointer 已切到 `v0.4.2`
-- 安装与更新入口都应按 `v0.4.2` 继续验证
+- 当前目标状态是：在不升级版本号的前提下，重新对齐 `v0.4.2` 的 GitHub Release 资产、发布仓目录副本与公开 stable pointer。
+- 覆盖完成后，安装与更新入口仍按 `v0.4.2` 继续验证。
 
 ## 给大模型的新安装提示词（v0.4.2）
 

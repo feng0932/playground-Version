@@ -1,10 +1,10 @@
 {
   "source_repo": "Playground-English",
   "source_branch": "v0.4.2",
-  "source_commit": "342421fe6d6be99189c805ea6f30704db0f7f93a",
+  "source_commit": "a051f12428410d4e8dd10fee1a2c93c112c7b8d9",
   "freeze_commit": "63eaf68c0076491bc75c2323b5c3f44bc2c98c3c",
   "bundle_version": "v0.4.2",
-  "exported_at": "2026-04-24T09:55:55Z",
+  "exported_at": "2026-04-24T14:09:59Z",
   "export_kind": "release",
-  "notes": "GitHub Release ai-team-bundle-v0.4.2 published"
+  "notes": "GitHub Release ai-team-bundle-v0.4.2 hotfix-overwrite published"
 }

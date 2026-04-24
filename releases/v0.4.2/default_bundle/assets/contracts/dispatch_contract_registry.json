@@ -73,13 +73,53 @@
         "active_primary_window_default": "direct_human_conversation",
         "allow_direct_user_question_semantics": "worker_exception_only_not_primary_window_gate"
       },
+      "primary_window_release_matrix": {
+        "new_project": "active_primary_window",
+        "historical_project": "not_consumable"
+      },
+      "control_action_contract": {
+        "/总控": "00_main_thread_entry_or_status_only",
+        "/返回总控": "child_thread_exit_only",
+        "/读取回执": "00_main_thread_receipt_consume_and_rejudge_only",
+        "legacy_00_unified_relay_path": "retired_not_consumable"
+      },
       "human_visible_reply_surface_contract": {
         "default_surface": "direct_human_conversation",
-        "missing_material_policy": "return_structured_gap_package"
+        "missing_material_policy": "return_structured_gap_package",
+        "forbidden_literals": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "forbidden_internal_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch",
+          "allow_direct_user_question_used",
+          "writable_targets_ack",
+          "closure_evidence_claims"
+        ]
       },
       "machine_receipt_surface_contract": {
         "authority_host": "dispatch_contract_registry.json",
-        "required_receipt": "工单回执"
+        "required_receipt": "工单回执",
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "control_consumer": "00-编排-总控",
+        "verifier_read_host": "machine_receipt_surface",
+        "human_visible_dispatch_evidence_required": false,
+        "runtime_write_policy": "dispatch_prompt_machine_only_carrier_after_human_visible_reply",
+        "dispatch_prompt_carrier_heading": "Machine Receipt Carrier (Machine Only)"
+      },
+      "receipt_consumption_chain_contract": {
+        "receipt_latch_owner": "00-编排-总控",
+        "rejudge_owner": "00-编排-总控",
+        "unlock_owner": "00-编排-总控",
+        "same_stage_remediation_owner": "00-编排-总控",
+        "new_turn_trigger": "/读取回执"
       },
       "layered_project_truth_contract": {
         "required_project_truth_hosts": [
@@ -227,13 +267,53 @@
         "active_primary_window_default": "direct_human_conversation",
         "allow_direct_user_question_semantics": "worker_exception_only_not_primary_window_gate"
       },
+      "primary_window_release_matrix": {
+        "new_project": "locked_standby_until_01_receipt_consumed",
+        "historical_project": "active_primary_window"
+      },
+      "control_action_contract": {
+        "/总控": "00_main_thread_entry_or_status_only",
+        "/返回总控": "child_thread_exit_only",
+        "/读取回执": "00_main_thread_receipt_consume_and_rejudge_only",
+        "legacy_00_unified_relay_path": "retired_not_consumable"
+      },
       "human_visible_reply_surface_contract": {
         "default_surface": "direct_human_conversation",
-        "missing_material_policy": "return_structured_gap_package"
+        "missing_material_policy": "return_structured_gap_package",
+        "forbidden_literals": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "forbidden_internal_fields": [
+          "role_prompt_source",
+          "role_prompt_sha256",
+          "dispatch_instance_id",
+          "task_chain_id",
+          "task_chain_epoch",
+          "allow_direct_user_question_used",
+          "writable_targets_ack",
+          "closure_evidence_claims"
+        ]
       },
       "machine_receipt_surface_contract": {
         "authority_host": "dispatch_contract_registry.json",
-        "required_receipt": "工单回执"
+        "required_receipt": "工单回执",
+        "required_sections": [
+          "工单回执",
+          "dispatch_evidence"
+        ],
+        "control_consumer": "00-编排-总控",
+        "verifier_read_host": "machine_receipt_surface",
+        "human_visible_dispatch_evidence_required": false,
+        "runtime_write_policy": "dispatch_prompt_machine_only_carrier_after_human_visible_reply",
+        "dispatch_prompt_carrier_heading": "Machine Receipt Carrier (Machine Only)"
+      },
+      "receipt_consumption_chain_contract": {
+        "receipt_latch_owner": "00-编排-总控",
+        "rejudge_owner": "00-编排-总控",
+        "unlock_owner": "00-编排-总控",
+        "same_stage_remediation_owner": "00-编排-总控",
+        "new_turn_trigger": "/读取回执"
       },
       "layered_project_truth_contract": {
         "required_project_truth_hosts": [

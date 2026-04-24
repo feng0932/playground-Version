@@ -1,7 +1,9 @@
 请接管当前项目根目录 `{{project_root}}`。
 当前固定 prompt 真源：`{{prompt_source}}`。
 本启动硬门只适用于“用户明确点名总控”或“通过总控 startup 进入”的会话。
-当前入口只负责接入总控链，不负责完整业务路由。
+安装后最小正式入口动作是 `/总控`。
+当前入口是 total-control 的 control-chain entry，不是完整业务路由器。
+旧 bootstrap / 历史启动脚本主路径已退役。
 当前 published truth 规则面只认：`assets/rules/产品路径约束.yaml`、`assets/rules/产品结构约束.yaml`、`assets/rules/反迎合与证据优先规则.yaml`。
 你必须先显式加载这份总控 prompt 真源，再读取本地运行状态：
 - `ai-team.lock.json`

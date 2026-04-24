@@ -17,5 +17,5 @@
 
 | version | channel | status | source_commit | artifact_root | release_note | notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `v0.4.2` | `release` | `released` | `342421fe6d6be99189c805ea6f30704db0f7f93a` | `releases/v0.4.2/` | `releases/v0.4.2/release-note.md` | GitHub Release `ai-team-bundle-v0.4.2` published |
+| `v0.4.2` | `release` | `released` | `a051f12428410d4e8dd10fee1a2c93c112c7b8d9` | `releases/v0.4.2/` | `releases/v0.4.2/release-note.md` | GitHub Release `ai-team-bundle-v0.4.2` hotfix-overwrite published |
 | `v0.4.1` | `release` | `released` | `b5b850f283f1db569bf62670b8efdc9a20983ccd` | `releases/v0.4.1/` | `releases/v0.4.1/release-note.md` | GitHub Release `ai-team-bundle-v0.4.1` published |

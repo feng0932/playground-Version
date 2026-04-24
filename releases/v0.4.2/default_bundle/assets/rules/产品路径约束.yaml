@@ -37,6 +37,18 @@ routing_contract:
   historical_project_host_model:
     - 00-编排-总控
     - 10-执行-产品专家
+  primary_window_release_matrix:
+    project_package_initialization:
+      new_project: active_primary_window
+      historical_project: not_consumable
+    product_source_completion:
+      new_project: locked_standby_until_01_receipt_consumed
+      historical_project: active_primary_window
+  control_action_contract:
+    /总控: 00_main_thread_entry_or_status_only
+    /返回总控: child_thread_exit_only
+    /读取回执: 00_main_thread_receipt_consume_and_rejudge_only
+    legacy_00_unified_relay_path: retired_not_consumable
   return_target_semantics: business_consumer_contract
   same_stage_return_targets_semantics: same_stage_remediation_only
   unlock_contract_semantics: release_next_visible_action_after_control_consumes_terminal_receipt

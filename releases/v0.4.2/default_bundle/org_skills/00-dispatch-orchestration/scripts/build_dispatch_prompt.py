@@ -362,8 +362,11 @@ def build_dispatch_contract_block(
         "stage_snapshot_contract",
         "unlock_contract",
         "primary_window_conversation_contract",
+        "primary_window_release_matrix",
+        "control_action_contract",
         "human_visible_reply_surface_contract",
         "machine_receipt_surface_contract",
+        "receipt_consumption_chain_contract",
         "layered_project_truth_contract",
         "shared_object_rule_capability_contract",
         "prototype_foundation_contract",
@@ -400,6 +403,79 @@ def build_dispatch_contract_block(
     return f"### Dispatch Contract Block\n```yaml\n{yaml_block}\n```"
 
 
+def is_primary_window_registry_entry(registry_entry: dict[str, Any]) -> bool:
+    host_window_contract = registry_entry.get("host_window_contract")
+    return isinstance(host_window_contract, dict) and str(host_window_contract.get("slot_type", "")).strip() == "primary_window"
+
+
+def build_machine_receipt_carrier(handoff_spec: dict[str, Any], registry_entry: dict[str, Any]) -> str:
+    receipt_surface_contract = registry_entry.get("machine_receipt_surface_contract")
+    if not isinstance(receipt_surface_contract, dict):
+        fail("primary-window registry entry must publish machine_receipt_surface_contract")
+
+    carrier_heading = str(receipt_surface_contract.get("dispatch_prompt_carrier_heading", "")).strip()
+    if not carrier_heading:
+        fail("primary-window machine_receipt_surface_contract must publish dispatch_prompt_carrier_heading")
+
+    receipt_lines = [
+        "## 工单回执",
+        "- 执行状态：【done / blocked / need_user】",
+        f"- 当前任务：{handoff_spec['label']}",
+        "- 已改文件清单：【无 / 列出修改的真源文件 / 过程文件】",
+        "- 输出产物清单：【正式产物路径 / 过程文件路径】",
+        "- Blocker 数量：【0 / n】",
+        "- Warning 数量：【0 / n】",
+        "- 未覆盖项数量：【0 / n】",
+        "- 下一跳请求：【回总控复核 / 改派 10-执行-产品专家补全真源 / 等待用户补料】",
+        "- 下一跳最小输入包：【无 / 缺失的最小输入包】",
+        "",
+        "## dispatch_evidence",
+        "- role_prompt_source：",
+        "- role_prompt_sha256：",
+        "- dispatch_instance_id：",
+        "- task_chain_id：",
+        "- task_chain_epoch：",
+        "- input_package_summary：",
+        "- allow_direct_user_question_used：【true / false】",
+        "- allowed_user_question_scope_used：",
+        "- writable_targets_ack：",
+        "- blocker_targets_touched：",
+        "- closure_evidence_claims：",
+    ]
+
+    if "stage_snapshot_contract" in registry_entry:
+        receipt_lines.extend(
+            [
+                "- current_phase：",
+                "- phase_status：",
+                "- confirmed_items：",
+                "- pending_items：",
+                "- recommended_return_target：",
+            ]
+        )
+
+    if str(handoff_spec.get("dispatch_intent", "")).strip() == "product_source_completion":
+        receipt_lines.extend(
+            [
+                "- layer_consumed：",
+                "- inherited_hosts_checked：",
+                "- module_exceptions：",
+                "- upgrade_required：",
+                "- upgrade_target_host：",
+            ]
+        )
+
+    return "\n".join(
+        [
+            f"#### {carrier_heading}",
+            "```md",
+            "\n".join(receipt_lines),
+            "```",
+            "该 machine receipt carrier 仅供 machine_receipt_surface 消费，不得进入 human-visible reply body。",
+        ]
+    )
+
+
 def build_dispatch_prompt(
     handoff_spec: dict[str, Any],
     registry_entry: dict[str, Any],
@@ -408,17 +484,18 @@ def build_dispatch_prompt(
     role_prompt_bytes: int,
 ) -> str:
     contract_block = build_dispatch_contract_block(handoff_spec, registry_entry, role_prompt_sha256)
-    return "\n".join(
-        [
-            f"请接管当前派发任务，目标角色为 `{handoff_spec['agent']}`。",
-            "你必须先读取下方 `Dispatch Contract Block` 与 raw `Role Prompt Body` carrier；若 authority 缺字段、raw payload 不可解析或写入目标不清，直接 `blocked` 并返回总控。",
-            contract_block,
-            "#### Role Prompt Body",
-            f"<<<ROLE_PROMPT_BODY sha256={role_prompt_sha256} bytes={role_prompt_bytes}>>>",
-            role_prompt_body,
-            f"<<<END_ROLE_PROMPT_BODY sha256={role_prompt_sha256}>>>",
-        ]
-    )
+    sections = [
+        f"请接管当前派发任务，目标角色为 `{handoff_spec['agent']}`。",
+        "你必须先读取下方 `Dispatch Contract Block` 与 raw `Role Prompt Body` carrier；若 authority 缺字段、raw payload 不可解析或写入目标不清，直接 `blocked` 并返回总控。",
+        contract_block,
+        "#### Role Prompt Body",
+        f"<<<ROLE_PROMPT_BODY sha256={role_prompt_sha256} bytes={role_prompt_bytes}>>>",
+        role_prompt_body,
+        f"<<<END_ROLE_PROMPT_BODY sha256={role_prompt_sha256}>>>",
+    ]
+    if is_primary_window_registry_entry(registry_entry):
+        sections.append(build_machine_receipt_carrier(handoff_spec, registry_entry))
+    return "\n".join(sections)
 
 
 def main(argv: list[str]) -> int:
