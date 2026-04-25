@@ -7,6 +7,6 @@
   "tarball_url": "https://github.com/feng0932/playground-Version/releases/download/ai-team-bundle-v0.4.2/ai-team-bundle-v0.4.2.tar.gz",
   "manifest_url": "https://github.com/feng0932/playground-Version/releases/download/ai-team-bundle-v0.4.2/ai-team-bundle-v0.4.2.manifest.json",
   "installer_archive_url": "https://github.com/feng0932/playground-Version/releases/download/ai-team-bundle-v0.4.2/ai-team-bundle-v0.4.2-installer.tar.gz",
-  "installer_archive_sha256": "6e925bd505f485068a86cb13f158cfaebafe70c0d452f1c8c5004c32c0dce257",
-  "bundle_sha256": "799b729b5f111f1dee8a43301a6d72bff4e37c34ec91c63ade585e04cb5f0cb1"
+  "installer_archive_sha256": "97c6d188911167a9424de929d829476fabedc15a1b5db3e15cbfb0cb51e1e7b5",
+  "bundle_sha256": "9a0eb0d304a4d66397c8af325ee8047484eaa6aebf7ec1c97ce054b790e0ce5f"
 }
