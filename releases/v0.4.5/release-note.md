@@ -1,0 +1,270 @@
+# ai-team-bundle v0.4.5 版本说明
+
+`v0.4.5` 是承接 `v0.4.4` 的正式发布版本；这一版不重开控制链，而是把当前脚本消费版本、stable pointer、release carrier、版本仓导出面和内网优先发布链统一收口到 `v0.4.5`。
+
+如果用一句话概括这次变化：
+
+**`v0.4.5` 的目标不是新增一套发布规则，而是把当前已经验证过的 installer/runtime 主链、`01 / 10` 不漂移目标和内网优先发布面收成同一版本语义，避免继续由 `v0.4.4` 载体代演。**
+
+## 版本定位
+
+- `v0.4.4` 是上一轮原型前后意图提取增强与 repo-local 发布面收口版本。
+- `v0.4.5` 是承接该能力面的正式发布收口版本，重点是把当前分支真实变化与正式发布载体统一到同一版本。
+- 这次不新增新的对人窗口，不重开 `00 / 01 / 10 / worker` 控制链，不新增第二条治理链。
+- 当前目标是把 bundle 真源、tracked stable pointer、release note、版本仓导出目录与安装入口全部对齐到 `v0.4.5`。
+
+## 本次变化
+
+### 1. 本地 bundle 真源版本升到 `v0.4.5`
+
+- `install/default_bundle/manifest.json` 的 `bundle_version` 切到 `v0.4.5`。
+- 本地源码安装语义仍保持 `local-default-bundle`，不把 release 安装身份误写回本地真源。
+
+### 2. 发布窄链从 `v0.4.4` carrier 切到 `v0.4.5`
+
+- tracked `install/stable-release.json` 将以 `v0.4.5` build 产物反写，不再继续由 `v0.4.4` 版本目录代演。
+- `tests/test_launch_judgment_narrow_chain.py`、`release note`、`freeze snapshot` 与版本宿主统一切到 `v0.4.5`。
+- `dev/current.md`、`dev/version-index.md` 与 `dev/v0.4.5/` 目录一起承接当前开发消费入口。
+
+### 3. 正式发布顺序固定为“内网优先，GitHub 辅助”
+
+- 正式 push 顺序以 `internal` 为主，`github` 为辅。
+- 正式安装入口优先使用内网版本仓原始下载 URL。
+- GitHub 保留为辅助镜像与外部补充可达性入口，不再作为当前版本唯一发布面。
+
+## 影响范围
+
+- 影响：
+  - 当前 bundle 本地真源版本号
+  - tracked stable release metadata
+  - release note carrier
+  - 开发版本入口指针
+  - 版本仓 `releases/v0.4.5/` 导出目录
+- 不影响：
+  - `00 / 01 / 10 / worker` 的控制面所有权
+  - `01 / 10` 的对人职责边界
+  - worker 不直接对人这一条边界
+  - `VSCode / Codex / 宿主 UI`
+
+## 验证命令与结果
+
+正式执行时至少运行以下命令：
+
+```bash
+cd /Users/mac/Documents/Playground-English
+PYTHONPATH=dev python3 -m unittest tests.test_release_bundle -q
+PYTHONPATH=dev python3 -m unittest tests.test_bootstrap_smoke -q
+PYTHONPATH=dev python3 -m unittest tests.test_default_bundle -q
+PYTHONPATH=dev python3 -m unittest tests.test_min_install -q
+PYTHONPATH=dev python3 -m unittest tests.test_version_governance -q
+PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
+```
+
+当前正式结果会在发版收口后回填到本节，包括：
+
+- release builder 产物路径
+- `bundle SHA256`
+- `installer archive SHA256`
+- tracked `stable-release.json` 一致性结果
+- 真实安装 smoke 结果与日志位置
+
+## 不包含内容
+
+- 不包含新的控制面重设计。
+- 不包含新的对人窗口名。
+- 不包含新的 worker 直连对人能力。
+- 不包含把 repo-local `docs/`、`PROJECT_MEMORY.md` 写成已发布 bundle 资产。
+
+## 正式发版结果
+
+- 当前发布阶段：
+  - `release-in-progress`
+- 正式远端：
+  - 内网版本仓：待回填
+  - GitHub 辅助镜像：待回填
+- stable pointer：
+  - 待切换到 `v0.4.5`
+- bundle SHA256：
+  - 待回填
+- installer archive SHA256：
+  - 待回填
+
+正式远端安装入口（发版后使用）：
+
+- stable pointer：
+  - `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/stable-release.json`
+- macOS 安装入口：
+  - `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.sh`
+- Windows 安装入口：
+  - `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1`
+- GitHub 辅助镜像入口：
+  - 待回填
+
+## 给大模型的继续执行提示
+
+继续接手本轮 `v0.4.5` 正式发版时，先读：
+
+1. `dev/PROJECT_MEMORY.md`
+2. `dev/docs/superpowers/memory/active/04-runtime-installer-and-release.md`
+3. `dev/docs/superpowers/memory/active/09-release-and-version-governance.md`
+4. `dev/install/default_bundle/manifest.json`
+5. `dev/install/stable-release.json`
+6. `dev/docs/releases/ai-team-bundle-v0.4.5-release-note.md`
+7. `dev/tests/test_launch_judgment_narrow_chain.py`
+
+不要误判的 truth boundary：
+
+- `dev/install/default_bundle/` 才是当前 bundle 真源
+- `dev/install/stable-release.json` 是 tracked stable release pointer 真源
+- `dev/docs/releases/` 是 release note carrier，不是 bundle 真源
+- `/Users/mac/Documents/playground-Version` 只承接导出结果，不回写 bundle 真源
+- `.ai-team/` 是项目本地运行态，不是正式提交边界
+
+当前版本已经进入的正式状态：
+
+- 当前目标是把 `v0.4.5` 的 repo-local 发布面、版本仓导出面和正式安装入口统一到同一版本语义。
+- 下一步正式动作必须基于 `v0.4.5` build 产物、`v0.4.5` tracked pointer 和真实远端可达结果执行。
+
+## 给大模型的新安装提示词（v0.4.5）
+
+### macOS
+
+```text
+你现在要在本机执行 ai-team v0.4.5 的正式新安装，不要只解释步骤，要实际运行命令并输出完整日志。
+
+要求：
+1. 先确认你有 shell、网络、文件写权限；如果没有，直接说明无法执行。
+2. 使用正式远端安装入口执行安装，不要手工拼装 bundle。
+3. 保留完整 stdout/stderr。
+4. 安装后继续执行校验命令，并输出结果。
+5. 如果任一步失败，立即停止。
+
+执行命令：
+curl -fsSL http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.sh | bash -s -- v0.4.5 2>&1 | tee /tmp/ai-team-install-v0.4.5.log
+
+安装后继续执行：
+export PATH="$HOME/.ai-team/bin:$PATH"
+which ai-team
+ai-team install --project-root .
+ai-team doctor --project-root .
+cat ai-team.lock.json 2>/dev/null || true
+cat .ai-team/runtime.json 2>/dev/null || true
+ls -la .ai-team/state 2>/dev/null || true
+
+最终必须输出：
+- 是否真的执行了新安装
+- 实际安装到的 bundle_version / release_tag
+- ai-team doctor 的关键字段
+- 是否写入 governance-log.jsonl / governance-latest.json
+- 是否出现 checksum mismatch、metadata fetch failure、downgrade block
+- /tmp/ai-team-install-v0.4.5.log 的关键片段
+```
+
+### Windows
+
+```text
+你现在要在本机执行 ai-team v0.4.5 的正式新安装，不要只解释步骤，要实际运行命令并输出完整日志。
+
+要求：
+1. 先确认你有 PowerShell、网络、文件写权限；如果没有，直接说明无法执行。
+2. 使用正式远端安装入口执行安装，不要手工拼装 bundle。
+3. 保留完整 stdout/stderr。
+4. 安装后继续执行校验命令，并输出结果。
+5. 如果任一步失败，立即停止。
+
+执行命令：
+$script = Join-Path $env:TEMP "install-ai-team-v0.4.5.ps1"
+Invoke-WebRequest -Uri "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1" -OutFile $script
+powershell -ExecutionPolicy Bypass -File $script -Version v0.4.5 *>&1 | Tee-Object -FilePath "$env:TEMP\\ai-team-install-v0.4.5.log"
+
+安装后继续执行：
+where.exe ai-team
+ai-team install --project-root .
+ai-team doctor --project-root .
+Get-Content ai-team.lock.json -ErrorAction SilentlyContinue
+Get-Content .ai-team\\runtime.json -ErrorAction SilentlyContinue
+Get-ChildItem .ai-team\\state -Force -ErrorAction SilentlyContinue
+
+最终必须输出：
+- 是否真的执行了新安装
+- 实际安装到的 bundle_version / release_tag
+- ai-team doctor 的关键字段
+- 是否写入 governance-log.jsonl / governance-latest.json
+- 是否出现 checksum mismatch、metadata fetch failure、downgrade block
+- $env:TEMP\\ai-team-install-v0.4.5.log 的关键片段
+```
+
+## 给大模型的更新提示词（v0.4.5）
+
+### macOS
+
+```text
+你现在要在本机执行 ai-team v0.4.5 的正式更新，不要只解释步骤，要实际运行命令并输出完整日志。
+
+要求：
+1. 先确认你有 shell、网络、文件写权限；如果没有，直接说明无法执行。
+2. 先采集更新前状态：which ai-team、ai-team doctor || true。
+3. 使用正式远端安装入口执行更新，不要手工拼装 bundle。
+4. 保留完整 stdout/stderr。
+5. 更新后继续执行校验命令，并输出更新前后对照。
+6. 如果任一步失败，立即停止。
+
+执行命令：
+which ai-team || true
+ai-team doctor || true
+curl -fsSL http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.sh | bash -s -- v0.4.5 2>&1 | tee /tmp/ai-team-update-v0.4.5.log
+
+更新后继续执行：
+export PATH="$HOME/.ai-team/bin:$PATH"
+which ai-team
+ai-team doctor
+ai-team install --project-root .
+cat ai-team.lock.json 2>/dev/null || true
+cat .ai-team/runtime.json 2>/dev/null || true
+
+最终必须输出：
+- 是否真的执行了更新
+- 更新前后的 which ai-team
+- 更新前后的 ai-team 命令可用性与 ai-team doctor 关键字段
+- 实际安装到的 bundle_version / release_tag
+- 是否写入 governance-log.jsonl / governance-latest.json
+- 是否出现 checksum mismatch、metadata fetch failure、downgrade block
+- /tmp/ai-team-update-v0.4.5.log 的关键片段
+```
+
+### Windows
+
+```text
+你现在要在本机执行 ai-team v0.4.5 的正式更新，不要只解释步骤，要实际运行命令并输出完整日志。
+
+要求：
+1. 先确认你有 PowerShell、网络、文件写权限；如果没有，直接说明无法执行。
+2. 先采集更新前状态：where.exe ai-team、ai-team doctor。
+3. 使用正式远端安装入口执行更新，不要手工拼装 bundle。
+4. 保留完整 stdout/stderr。
+5. 更新后继续执行校验命令，并输出更新前后对照。
+6. 如果任一步失败，立即停止。
+
+执行命令：
+where.exe ai-team
+ai-team doctor
+$script = Join-Path $env:TEMP "install-ai-team-v0.4.5.ps1"
+Invoke-WebRequest -Uri "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1" -OutFile $script
+powershell -ExecutionPolicy Bypass -File $script -Version v0.4.5 *>&1 | Tee-Object -FilePath "$env:TEMP\\ai-team-update-v0.4.5.log"
+
+更新后继续执行：
+where.exe ai-team
+ai-team doctor
+ai-team install --project-root .
+Get-Content ai-team.lock.json -ErrorAction SilentlyContinue
+Get-Content .ai-team\\runtime.json -ErrorAction SilentlyContinue
+
+最终必须输出：
+- 是否真的执行了更新
+- 更新前后的 where.exe ai-team
+- 更新前后的 ai-team 命令可用性与 ai-team doctor 关键字段
+- 实际安装到的 bundle_version / release_tag
+- 是否写入 governance-log.jsonl / governance-latest.json
+- 是否出现 checksum mismatch、metadata fetch failure、downgrade block
+- $env:TEMP\\ai-team-update-v0.4.5.log 的关键片段
+```

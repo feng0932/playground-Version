@@ -1,0 +1,610 @@
+version: 1
+document_id: product_path_constraints
+scope: product_role_in_prd_lifecycle
+artifact_meta:
+  artifact_id: organization_product_path_constraints
+  artifact_role: product_path_constraints
+  layer: organization_rule_layer_v1
+  lifecycle_status: current
+  managed_in_lane: organization_continuation_items
+  startup_entry_guide: 00-执行SOP.md
+
+classification:
+  belongs_to: organization_role_rules
+  excluded_from:
+    - organization_planning
+  planning_dir_allowed_content:
+    - stage_goals
+    - continuation_items
+    - completion_criteria
+    - boundary_limits
+
+execution_scheme:
+  artifact_standard_first: true
+  state_path_second: true
+  authority_boundary_last: true
+  human_and_yaml_share_same_scheme: true
+  human_rule_file: assets/templates/33-模板-产品PRD.md
+  structure_rule_file: assets/rules/产品结构约束.yaml
+  anti_sycophancy_rule: assets/rules/反迎合与证据优先规则.yaml
+
+routing_contract:
+  control_chain_entry_owner: 00-编排-总控
+  visible_route_owner: 00-编排-总控
+  receipt_consumer_owner: 00-编排-总控
+  rejudge_owner: 00-编排-总控
+  human_window_family:
+    control_entry:
+      - 00-编排-总控
+    primary_window:
+      - 01-编排-初始化项目包
+      - 10-执行-产品专家
+    visible_worker: all_other_agents
+  new_project_host_model:
+    - 00-编排-总控
+    - 01-编排-初始化项目包
+    - 10-执行-产品专家
+  historical_project_host_model:
+    - 00-编排-总控
+    - 10-执行-产品专家
+  primary_window_release_matrix:
+    project_package_initialization:
+      new_project: active_primary_window
+      historical_project: not_consumable
+    product_source_completion:
+      new_project: locked_standby_until_01_receipt_consumed
+      historical_project: active_primary_window
+  control_action_contract:
+    /总控: 00_main_thread_entry_or_status_only
+    /返回总控: child_thread_exit_only
+    /读取回执: 00_main_thread_receipt_consume_and_rejudge_only
+    legacy_00_unified_relay_path: retired_not_consumable
+  control_action_owner:
+    /总控: 00-编排-总控
+    /返回总控:
+      - 01-编排-初始化项目包
+      - 10-执行-产品专家
+    /读取回执: 00-编排-总控
+  total_control_human_visible_surface_contract:
+    authority_host: 产品路径约束.yaml.routing_contract
+    applies_to:
+      - required_opening
+      - final_user_report
+    forbidden_literals:
+      - 当前固定 prompt
+      - 当前真实项目根目录
+      - 建议派发 Agent
+      - 是否建议新会话或并行
+      - 当前证据三元组
+      - 当前责任模式
+      - 模式来源
+      - 当前状态
+      - 是否已完成二次握手
+      - 本轮是否进入/退出 delivery owner mode
+      - 锁存范围
+      - 退出条件
+    forbidden_internal_fields:
+      - scope / artifact / evidence
+      - task_chain_id
+      - task_chain_epoch
+      - dispatch_instance_id
+      - role_prompt_source
+      - role_prompt_sha256
+    required_non_empty_lines: 3
+    required_line_prefix_groups:
+      - [当前由, 当前]
+      - [这轮已确认, 这轮唯一缺口]
+      - [下一步请]
+    allowed_single_line_literals:
+      - 当前不是对人窗口。
+  worker_user_message_policy: fixed_not_human_window_block
+  worker_user_block_literal: 当前不是对人窗口。
+  return_target_semantics: business_consumer_contract
+  same_stage_return_targets_semantics: same_stage_remediation_only
+  unlock_contract_semantics: release_next_visible_action_after_control_consumes_terminal_receipt
+  worker_lifecycle_semantics: ephemeral_worker_close_after_receipt_consumed
+  primary_window_return_reason_tokens:
+    - completed
+    - blocked
+    - need_user
+    - worker_requested
+    - scope_changed
+  project_package_completion_state: project_baseline_ready_10_unlocked
+  prototype_entry_gate_blocker: prototype_entry_missing
+
+stage_order:
+  - draft
+  - in_review
+  - approved
+  - frozen
+  - obsolete
+
+step_registry:
+  draft:
+    state_label: PRD 骨架与正式产物起点
+    requires_formal_outputs: true
+  in_review:
+    state_label: 跨角色评审与问题收口
+    requires_review_inputs: true
+  approved:
+    state_label: 业务批准待冻结
+    requires_human_approval: true
+  frozen:
+    state_label: 稳定基线
+    requires_baseline_lock: true
+  obsolete:
+    state_label: 废弃或替代
+    requires_replacement_relation: true
+
+trigger_rules:
+  high_risk_requirement:
+    requires: critical_rule_freeze
+  page_bearing_requirement:
+    requires: page_contract_list
+  structured_field_requirement:
+    requires: structured_contract_field_list
+  merged_prd_reading_layer_enabled:
+    requires: merged_prd_reading_layer
+  project_compliance_prereview_required:
+    trigger_scope: product_source_completion
+    blocker_code: project_compliance_prereview_missing
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - project_level_compliance_prereview
+      - high_risk_china_market_app_prereview
+    same_stage_return_targets:
+      - 01-prd-compliance-review
+      - 10-执行-产品专家
+  topic_baseline_required:
+    trigger_scope: product_source_completion
+    blocker_code: topic_baseline_missing
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - current_project_topic_entry_index
+      - topic_applicability_and_capability_trimming
+      - linked_topic_entry_requirements
+    same_stage_return_targets:
+      - 10-执行-产品专家
+  module_split_confirmation_required:
+    trigger_scope: project_package_initialization
+    blocker_code: module_split_confirmation_missing
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - module_split_confirmation
+      - active_module_set_freeze
+    same_stage_return_targets:
+      - 01-编排-初始化项目包
+  prd_formalization_required:
+    trigger_scope: prototype_entry
+    blocker_code: prd_formalization_missing
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - prd_body
+      - 4_2a_critical_rule_freeze
+      - 4_3_page_contracts
+      - 4_4_structured_contract_fields
+    same_stage_return_targets:
+      - 10-执行-产品专家
+  prototype_entry_prerequisites_required:
+    trigger_scope: prototype_entry
+    blocker_code: prototype_entry_missing
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - 4_2a_critical_rule_freeze
+      - 4_3_page_contracts
+      - 4_4_structured_contract_fields
+      - module_flow_human_confirmation_doc
+      - product_review_receipt
+    same_stage_return_targets:
+      - 10-执行-产品专家
+      - 20-审查-门禁审查
+      - 21-审查-产品审查
+      - 02-模块流程图与人类确认.md
+  shared_object_rule_capability_required:
+    trigger_scope: project_package_initialization
+    blocker_code: shared_object_rule_capability_host_missing
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - current_project_shared_object_rule_capability_entry
+      - shared_object_inventory
+      - shared_rule_baseline
+      - shared_capability_inventory
+    same_stage_return_targets:
+      - 01-编排-初始化项目包
+  shared_asset_foundation_required:
+    trigger_scope: project_package_initialization
+    blocker_code: shared_asset_foundation_missing
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - current_project_shared_asset_foundation_entry
+      - shared_component_inventory
+      - shared_pattern_inventory
+      - module_inheritance_and_exception_notes
+    same_stage_return_targets:
+      - 01-编排-初始化项目包
+      - 10-执行-产品专家
+  prototype_foundation_required:
+    trigger_scope: prototype_entry
+    blocker_code: prototype_foundation_missing
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - current_project_prototype_foundation_entry
+      - prototype_expression_foundations
+      - fidelity_defaults
+      - canvas_rules
+    same_stage_return_targets:
+      - 01-编排-初始化项目包
+      - 10-执行-产品专家
+  module_exception_upgrade_required:
+    trigger_scope: product_source_completion
+    blocker_code: module_exception_upgrade_required
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    blocker_policy: non_overridable
+    required_inputs:
+      - module_exception_record
+      - upgrade_required
+      - upgrade_target_host
+    same_stage_return_targets:
+      - 10-执行-产品专家
+
+review_entries:
+  product_review:
+    allowed_scopes:
+      - prototype_entry
+      - module_entity
+      - project_linkage
+      - delivery_readiness
+  prototype_review:
+    allowed_scopes:
+      - module_entity
+      - project_linkage
+      - delivery_readiness
+  reverse_review:
+    allowed_scopes:
+      - module_entity
+      - project_linkage
+      - delivery_readiness
+  test_review:
+    allowed_scopes:
+      - module_entity
+      - project_linkage
+      - delivery_readiness
+
+state_path_labels:
+  draft: PRD 骨架与正式产物起点
+  in_review: 跨角色评审与问题收口
+  approved: 业务批准待冻结
+  frozen: 稳定基线
+  obsolete: 废弃或替代
+
+ownership:
+  role_id: product
+  unique_owner_of: prd
+  responsible_for:
+    - business_goal
+    - scope
+    - priority
+    - acceptance_criteria_baseline
+    - business_approval
+    - freeze
+    - obsolete
+    - business_exception
+
+primary_artifact:
+  artifact_name: prd
+  artifact_role: product_primary_formal_artifact
+  schema_reference: assets/rules/产品结构约束.yaml
+  required_content_blocks:
+    - problem_definition
+    - business_goal_and_success_metrics
+    - in_scope
+    - out_of_scope
+    - requirement_items
+    - critical_rule_freeze
+    - user_flow
+    - interaction_prototype
+    - backend_operations_required
+    - backend_operations_reason
+    - backend_operations_logic
+    - key_states
+    - ui_notes
+    - acceptance_baseline
+    - risks_assumptions_open_questions
+    - downstream_docs
+    - version_status_reviewers_change_log
+  required_content_block_labels:
+    problem_definition: 问题定义
+    business_goal_and_success_metrics: 业务目标与成功标准
+    in_scope: 范围内内容
+    out_of_scope: 范围外内容
+    requirement_items: 需求项
+    critical_rule_freeze: 关键规则参数与边界冻结表
+    user_flow: 用户流程
+    interaction_prototype: 交互原型
+    backend_operations_required: 是否需要后台承接
+    backend_operations_reason: 后台承接判断依据
+    backend_operations_logic: 后台承接逻辑
+    key_states: 关键状态
+    ui_notes: UI 补充说明
+    acceptance_baseline: 验收口径
+    risks_assumptions_open_questions: 风险、假设与待定项
+    downstream_docs: 下游文档列表
+    version_status_reviewers_change_log: 版本、状态、评审人与变更日志
+  prohibited_content_blocks:
+    - api_field_definition
+    - request_response_structure
+    - data_model
+    - database_ddl
+    - final_visual_design
+    - technical_solution
+    - code_implementation
+    - test_script
+  prohibited_content_block_labels:
+    api_field_definition: 接口字段定义
+    request_response_structure: 请求响应结构
+    data_model: 数据模型
+    database_ddl: 数据库 DDL
+    final_visual_design: 最终视觉定稿
+    technical_solution: 具体技术方案
+    code_implementation: 代码实现方式
+    test_script: 测试脚本
+  missing_or_invalid_artifact_policy: block_transition
+
+conditional_content_blocks:
+  - page_contract_items
+  - structured_contract_field_items
+
+conditional_content_block_labels:
+  page_contract_items: 页面合同清单（命中页面场景时）
+  structured_contract_field_items: 结构化契约字段清单（命中结构化字段场景时）
+
+auxiliary_candidate_drafts:
+  allowed_in_stages:
+    - draft
+    - in_review
+  allowed_types:
+    - api_contract_candidate
+    - state_enum_candidate
+    - downstream_derivation_note
+  rules:
+    - must_be_explicitly_marked_as_candidate
+    - must_not_replace_formal_downstream_document
+    - expert_review_required_before_adoption
+    - candidate_absence_does_not_block_prd_draft_completion
+    - candidate_presence_does_not_count_as_downstream_gate_pass
+
+linked_rule_files:
+  structure_rule_file: assets/rules/产品结构约束.yaml
+  anti_sycophancy_rule: assets/rules/反迎合与证据优先规则.yaml
+
+fixed_path:
+  - draft
+  - in_review
+  - approved
+  - frozen
+  - obsolete
+
+transitions:
+  - from: draft
+    to: in_review
+    initiated_by:
+      - product
+    human_action_before_check:
+      - complete_review_ready_prd_package
+      - persist_required_outputs_for_in_review
+    machine_check_timing: after_outputs_formed_before_review_submission
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    required_checks:
+      - document_required_fields_complete
+      - out_of_scope_present
+      - prototype_chain_pages_have_4_3_page_contracts_when_applicable
+      - prototype_chain_pages_with_structured_fields_have_4_4_entries_when_applicable
+      - prototype_chain_product_review_receipt_present_when_applicable
+      - prototype_chain_4_3_page_contracts_and_6_map_one_to_one_by_page_id
+      - page_contracts_and_interaction_prototype_must_map_one_to_one_by_page_id
+      - prototype_chain_rows_use_independent_page_ids
+      - prototype_chain_terminal_type_is_not_generic
+      - compat / legacy / camelCase / silent default
+      - page_contract_list_required_when_applicable
+      - page_contract_core_fields_required_when_page_contract_list_present
+      - page_contract_list_must_link_to_requirement_ids_when_present
+      - page_elements_required_when_page_contract_list_present
+      - structured_contract_field_list_required_when_applicable
+      - structured_contract_fields_reference_existing_page_contracts_when_present
+      - structured_contract_fields_must_link_to_requirement_ids_when_present
+      - page_contracts_generic_terminal_type_is_requirements_only
+      - structured_contract_field_rows_must_use_terminal_specific_page_ids
+      - high_risk_trigger_registry_present
+      - critical_rule_freeze_required_when_high_risk_scenarios_present
+      - critical_rule_freeze_ttl_cooldown_retry_threshold_defined_when_applicable
+      - critical_rule_freeze_reset_baseline_defined_when_periodic_rules_exist
+      - critical_rule_freeze_inflight_policy_defined_when_dynamic_config_exists
+      - critical_rule_freeze_lifecycle_end_defined_when_create_or_generate_exists
+      - critical_rule_freeze_timeout_policy_defined_when_third_party_dependency_exists
+      - user_flow_present
+      - interaction_prototype_present
+      - backend_operations_required_present
+      - backend_operations_reason_present
+      - backend_operations_logic_present
+      - requirement_items_have_base_structure
+      - reviewers_locked
+
+  - from: in_review
+    to: approved
+    required_reviewers:
+      - product
+      - design
+      - frontend
+      - backend
+      - qa
+    human_action_before_check:
+      - collect_all_required_review_results
+      - persist_approval_basis_outputs
+    machine_check_timing: after_review_evidence_formed_before_human_approval
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    required_checks:
+      - all_required_reviews_passed
+      - key_states_complete
+      - all_requirements_have_acceptance_criteria
+      - no_blocking_open_items
+
+  - from: approved
+    to: frozen
+    approved_by:
+      - product
+    human_action_before_check:
+      - prepare_freeze_package
+      - confirm_change_and_baseline_records
+    machine_check_timing: after_freeze_package_formed_before_human_freeze_decision
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    required_checks:
+      - version_confirmed
+      - change_log_confirmed
+      - downstream_docs_locked
+      - baseline_stable
+
+  - from: draft
+    to: obsolete
+    initiated_by:
+      - product
+    human_action_before_check:
+      - prepare_obsolete_decision_package
+    machine_check_timing: after_obsolete_package_formed_before_human_decision
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    required_checks:
+      - obsolete_reason_present
+      - replacement_relation_recorded
+
+  - from: in_review
+    to: obsolete
+    initiated_by:
+      - product
+    human_action_before_check:
+      - prepare_obsolete_decision_package
+    machine_check_timing: after_obsolete_package_formed_before_human_decision
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    required_checks:
+      - obsolete_reason_present
+      - replacement_relation_recorded
+
+  - from: approved
+    to: obsolete
+    approved_by:
+      - product
+    human_action_before_check:
+      - prepare_obsolete_decision_package
+    machine_check_timing: after_obsolete_package_formed_before_human_decision
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    required_checks:
+      - obsolete_reason_present
+      - replacement_relation_recorded
+
+  - from: frozen
+    to: obsolete
+    approved_by:
+      - product
+    human_action_before_check:
+      - prepare_obsolete_decision_package
+    machine_check_timing: after_obsolete_package_formed_before_human_decision
+    gate_pass_semantics: machine_check_passed_ready_for_human_judgment
+    gate_fail_semantics: same_stage_rework_required
+    required_checks:
+      - obsolete_reason_present
+      - replacement_relation_recorded
+
+  - from: frozen
+    to: draft
+    allowed: false
+    note: create_new_version_and_restart_from_draft
+
+  - from: obsolete
+    to: draft
+    allowed: false
+    note: create_new_version_and_restart_from_draft
+
+forbidden_actions:
+  - replace_design_review
+  - replace_frontend_review
+  - replace_backend_review
+  - replace_qa_review
+  - skip_required_reviews
+  - bypass_blocking_issue_by_verbal_instruction
+  - substantive_change_without_re_review
+  - edit_frozen_prd_body_directly
+
+excluded_outputs:
+  - api_field_definition
+  - request_response_structure
+  - data_model
+  - database_ddl
+  - final_visual_design
+  - technical_solution
+  - code_implementation
+  - test_script
+
+engineering_handoff_boundary:
+  gate_a_runtime_name: ready_for_human_review
+  gate_b_runtime_name: engineering_handoff_ready
+  ready_for_human_review_does_not_imply_engineering_handoff_ready: true
+  approved_repository_scopes:
+    - 00-项目包/
+    - 01-模块执行包/
+    - 80-完整提交包/
+  product_truth_artifacts:
+    - prd_body
+    - 4_2a_critical_rule_freeze
+    - 4_3_page_contracts
+    - 4_4_structured_contract_fields
+    - user_flow
+    - backend_product_minimum_loop
+    - pm_module_diagram
+  implementation_truth_artifacts:
+    - fe_truth_source
+    - be_api_and_service_contract
+    - be_async_semantics
+    - qa_acceptance_coverage
+    - dba_lifecycle_and_storage
+    - ops_release_and_observability
+  pm_must_not_author:
+    - api_request_response_contract
+    - storage_schema
+    - database_ddl
+    - technical_solution
+    - automated_test_script
+  authored_trigger_hints_may_not_waive_inferred_triggers: true
+anti_sycophancy_behavior_contract:
+  shared_rule_file: assets/rules/反迎合与证据优先规则.yaml
+  no_fabricated_completion_under_missing_conflicting_or_implausible_inputs: true
+  urgency_never_overrides_gates: true
+  blocker_may_not_be_softened_for_user_preference: true
+  blocked_receipt_top_level_schema_must_remain_single: true
+  blocking_classification_lives_in_reason_or_findings_body_only: true
+
+enforcement:
+  blocking_issue_override_policy: formal_exception_record_required
+  frozen_change_policy: new_version_required
+  role_example_for_future_expansion: true
+  unpersisted_output_cannot_count_as_complete: true

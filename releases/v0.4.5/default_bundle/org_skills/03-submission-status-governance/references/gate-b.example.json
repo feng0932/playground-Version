@@ -1,0 +1,548 @@
+{
+  "schema": "submission_status.gate_b_evidence_pack",
+  "schema_version": "v1",
+  "registry_version": "gate-b-registry.v0.3.3",
+  "linked_rule_version": "gate-b-rules.v0.3.3",
+  "module": {
+    "module_id": "06-统一内部支撑后台",
+    "ready_for_human_review": true,
+    "module_green_contract": {
+      "when_engineering_handoff_required_false": "基础四审全绿",
+      "when_engineering_handoff_required_true": "基础四审全绿 + 24-审查-跨角色预审完成 + Gate B green",
+      "notes": "24-审查-跨角色预审是 Gate B 前置，不是独立绿灯通道"
+    },
+    "handoff_context": {
+      "engineering_review_requested": true
+    },
+    "scope": {
+      "has_ui": false,
+      "requires_backend": true,
+      "multi_role": false,
+      "affects_persistence": false,
+      "has_operational_risk": false
+    },
+    "declared_triggers": [
+      "dynamic_permission"
+    ],
+    "product_truth_signals": {
+      "dynamic_permission": true
+    },
+    "artifact_owner_map": {
+      "engineering_handoff_checklist": {
+        "总控": "R/A/G"
+      },
+      "unresolved_issue_ledger_ref": {
+        "总控": "R/A/G"
+      },
+      "be_truth_source_ref": {
+        "BE": "R/A",
+        "总控": "G"
+      },
+      "qa_truth_source_ref": {
+        "QA": "R/A",
+        "总控": "G"
+      },
+      "role_matrix": {
+        "BE": "R/A",
+        "总控": "G"
+      },
+      "data_scope_rule": {
+        "BE": "R/A",
+        "总控": "G"
+      },
+      "audit_rule": {
+        "BE": "R/A",
+        "总控": "G"
+      },
+      "gate_b_result": {
+        "总控": "R/A/G"
+      }
+    },
+    "required_supporting_docs": [
+      {
+        "artifact_id": "engineering_handoff_checklist"
+      },
+      {
+        "artifact_id": "unresolved_issue_ledger"
+      },
+      {
+        "artifact_id": "qa_truth_source"
+      },
+      {
+        "artifact_id": "be_truth_source"
+      },
+      {
+        "artifact_id": "role_matrix"
+      },
+      {
+        "artifact_id": "data_scope_rule"
+      },
+      {
+        "artifact_id": "audit_rule"
+      }
+    ],
+    "unresolved_issue_ledger_ref": {
+      "path": "01-模块执行包/06-统一内部支撑后台/04-过程文件/06-跨角色预审.md"
+    },
+    "fe_truth_source_ref_or_na": {
+      "na": true,
+      "rationale": "后台支撑模块无独立 FE truth source"
+    },
+    "be_truth_source_ref_or_na": {
+      "path": "01-模块执行包/06-统一内部支撑后台/02-工程交接/backend/be_api_contract.md"
+    },
+    "qa_truth_source_ref": {
+      "path": "01-模块执行包/06-统一内部支撑后台/02-工程交接/qa/qa_acceptance.md"
+    },
+    "dba_truth_source_ref_or_na": {
+      "na": true,
+      "rationale": "此最小样例不演示 persistence trigger"
+    },
+    "ops_truth_source_ref_or_na": {
+      "na": true,
+      "rationale": "此最小样例不演示 operational trigger"
+    },
+    "artifact_refs": {
+      "engineering_handoff_checklist": {
+        "path": "01-模块执行包/06-统一内部支撑后台/04-过程文件/06-工程交接门槛清单.md"
+      },
+      "unresolved_issue_ledger": {
+        "path": "01-模块执行包/06-统一内部支撑后台/04-过程文件/06-跨角色预审.md"
+      },
+      "qa_truth_source": {
+        "path": "01-模块执行包/06-统一内部支撑后台/02-工程交接/qa/qa_acceptance.md"
+      },
+      "be_truth_source": {
+        "path": "01-模块执行包/06-统一内部支撑后台/02-工程交接/backend/be_api_contract.md"
+      },
+      "role_matrix": {
+        "path": "01-模块执行包/06-统一内部支撑后台/02-工程交接/rbac/role_matrix.md"
+      },
+      "data_scope_rule": {
+        "path": "01-模块执行包/06-统一内部支撑后台/02-工程交接/rbac/data_scope.md"
+      },
+      "audit_rule": {
+        "path": "01-模块执行包/06-统一内部支撑后台/02-工程交接/rbac/audit_rule.md"
+      }
+    }
+  },
+  "registry": {
+    "approved_repository_scopes": [
+      "00-项目包/",
+      "01-模块执行包/",
+      "80-完整提交包/"
+    ],
+    "contract_extensions": {
+      "preserve_top_level_unknown_keys": true
+    },
+    "artifact_registry": {
+      "engineering_handoff_checklist": {
+        "artifact_id": "engineering_handoff_checklist",
+        "owner_role": "总控",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/04-过程文件/*工程交接门槛清单*.md",
+          "00-项目包/04-过程文件/*工程交接门槛清单*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "engineering_handoff_checklist",
+        "na_policy": "forbidden"
+      },
+      "unresolved_issue_ledger": {
+        "artifact_id": "unresolved_issue_ledger",
+        "owner_role": "总控",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/04-过程文件/*跨角色预审*.md",
+          "00-项目包/04-过程文件/*跨角色预审*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "unresolved_issue_ledger",
+        "na_policy": "forbidden"
+      },
+      "fe_truth_source": {
+        "artifact_id": "fe_truth_source",
+        "owner_role": "FE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/fe_*.md",
+          "00-项目包/02-工程交接/**/fe_*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "role_truth_source",
+        "na_policy": "explicit_justified_na_allowed"
+      },
+      "be_truth_source": {
+        "artifact_id": "be_truth_source",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/be_*.md",
+          "00-项目包/02-工程交接/**/be_*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "role_truth_source",
+        "na_policy": "explicit_justified_na_allowed"
+      },
+      "qa_truth_source": {
+        "artifact_id": "qa_truth_source",
+        "owner_role": "QA",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/qa_*.md",
+          "00-项目包/02-工程交接/**/qa_*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "role_truth_source",
+        "na_policy": "forbidden"
+      },
+      "dba_truth_source": {
+        "artifact_id": "dba_truth_source",
+        "owner_role": "DBA",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/dba_*.md",
+          "00-项目包/02-工程交接/**/dba_*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "role_truth_source",
+        "na_policy": "explicit_justified_na_allowed"
+      },
+      "ops_truth_source": {
+        "artifact_id": "ops_truth_source",
+        "owner_role": "Ops/SRE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/ops_*.md",
+          "00-项目包/02-工程交接/**/ops_*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "role_truth_source",
+        "na_policy": "explicit_justified_na_allowed"
+      },
+      "pm_module_diagram": {
+        "artifact_id": "pm_module_diagram",
+        "owner_role": "PM",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/01-PRD/**/*流程图*.md",
+          "01-模块执行包/**/01-PRD/**/*泳道图*.md",
+          "01-模块执行包/**/01-PRD/**/*模块图*.md",
+          "00-项目包/**/01-PRD/**/*流程图*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "pm_module_diagram",
+        "na_policy": "forbidden"
+      },
+      "state_flow_diagram": {
+        "artifact_id": "state_flow_diagram",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*state*diagram*.md",
+          "00-项目包/02-工程交接/**/*state*diagram*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "state_flow_diagram",
+        "na_policy": "forbidden"
+      },
+      "timeout_policy": {
+        "artifact_id": "timeout_policy",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*timeout*.md",
+          "00-项目包/02-工程交接/**/*timeout*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "retry_or_compensation_policy": {
+        "artifact_id": "retry_or_compensation_policy",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*retry*.md",
+          "00-项目包/02-工程交接/**/*retry*.md",
+          "01-模块执行包/**/02-工程交接/**/*compensation*.md",
+          "00-项目包/02-工程交接/**/*compensation*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "lifecycle_matrix": {
+        "artifact_id": "lifecycle_matrix",
+        "owner_role": "DBA",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*lifecycle*.md",
+          "00-项目包/02-工程交接/**/*lifecycle*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "lifecycle_matrix",
+        "na_policy": "forbidden"
+      },
+      "retention_rule": {
+        "artifact_id": "retention_rule",
+        "owner_role": "DBA",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*retention*.md",
+          "00-项目包/02-工程交接/**/*retention*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "cleanup_owner": {
+        "artifact_id": "cleanup_owner",
+        "owner_role": "DBA",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*cleanup*.md",
+          "00-项目包/02-工程交接/**/*cleanup*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "ownership_note",
+        "na_policy": "forbidden"
+      },
+      "role_matrix": {
+        "artifact_id": "role_matrix",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*role*matrix*.md",
+          "00-项目包/02-工程交接/**/*role*matrix*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "role_matrix",
+        "na_policy": "forbidden"
+      },
+      "data_scope_rule": {
+        "artifact_id": "data_scope_rule",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*data*scope*.md",
+          "00-项目包/02-工程交接/**/*data*scope*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "data_scope_rule",
+        "na_policy": "forbidden"
+      },
+      "audit_rule": {
+        "artifact_id": "audit_rule",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*audit*.md",
+          "00-项目包/02-工程交接/**/*audit*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "effective_rule": {
+        "artifact_id": "effective_rule",
+        "owner_role": "Ops/SRE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*effective*.md",
+          "00-项目包/02-工程交接/**/*effective*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "inflight_policy": {
+        "artifact_id": "inflight_policy",
+        "owner_role": "Ops/SRE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*inflight*.md",
+          "00-项目包/02-工程交接/**/*inflight*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "rollback_rule": {
+        "artifact_id": "rollback_rule",
+        "owner_role": "Ops/SRE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*rollback*.md",
+          "00-项目包/02-工程交接/**/*rollback*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "publish_state_flow": {
+        "artifact_id": "publish_state_flow",
+        "owner_role": "Ops/SRE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*publish*.md",
+          "00-项目包/02-工程交接/**/*publish*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "state_flow_diagram",
+        "na_policy": "forbidden"
+      },
+      "block_type_mapping": {
+        "artifact_id": "block_type_mapping",
+        "owner_role": "Ops/SRE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*block*type*.md",
+          "00-项目包/02-工程交接/**/*block*type*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "repair_page_mapping": {
+        "artifact_id": "repair_page_mapping",
+        "owner_role": "Ops/SRE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*repair*.md",
+          "00-项目包/02-工程交接/**/*repair*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "recovery_flow_or_state_diagram": {
+        "artifact_id": "recovery_flow_or_state_diagram",
+        "owner_role": "FE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*recovery*.md",
+          "00-项目包/02-工程交接/**/*recovery*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "state_flow_diagram",
+        "na_policy": "forbidden"
+      },
+      "request_state_flow": {
+        "artifact_id": "request_state_flow",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*request*state*.md",
+          "00-项目包/02-工程交接/**/*request*state*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "state_flow_diagram",
+        "na_policy": "forbidden"
+      },
+      "sla_rule": {
+        "artifact_id": "sla_rule",
+        "owner_role": "QA",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*sla*.md",
+          "00-项目包/02-工程交接/**/*sla*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "pause_resume_rule": {
+        "artifact_id": "pause_resume_rule",
+        "owner_role": "QA",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*pause*resume*.md",
+          "00-项目包/02-工程交接/**/*pause*resume*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "result_feedback_rule": {
+        "artifact_id": "result_feedback_rule",
+        "owner_role": "QA",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*feedback*.md",
+          "00-项目包/02-工程交接/**/*feedback*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "policy_note",
+        "na_policy": "forbidden"
+      },
+      "branch_flow_diagram": {
+        "artifact_id": "branch_flow_diagram",
+        "owner_role": "FE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*branch*.md",
+          "00-项目包/02-工程交接/**/*branch*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "branch_flow_diagram",
+        "na_policy": "forbidden"
+      },
+      "status_transition_diagram": {
+        "artifact_id": "status_transition_diagram",
+        "owner_role": "BE",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/02-工程交接/**/*status*transition*.md",
+          "00-项目包/02-工程交接/**/*status*transition*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "state_flow_diagram",
+        "na_policy": "forbidden"
+      },
+      "legacy_migration_record": {
+        "artifact_id": "legacy_migration_record",
+        "owner_role": "总控",
+        "allowed_path_pattern": [
+          "01-模块执行包/**/04-过程文件/*工程交接门槛清单*.md",
+          "00-项目包/04-过程文件/*工程交接门槛清单*.md"
+        ],
+        "allowed_file_type": [
+          "md"
+        ],
+        "semantic_check_profile": "legacy_migration_record",
+        "na_policy": "forbidden"
+      }
+    }
+  }
+}
