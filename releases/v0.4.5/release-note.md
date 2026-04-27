@@ -39,6 +39,12 @@
 - 只有在真实主窗口执行 `ai-team runtime --action window_continue --current-host "<01|10>"` 后，`01 / 10` 才算正式接管。
 - 错误 host 调 `window_continue` 必须 fixed block 为 `当前不是对人窗口。`
 
+### 5. 正式安装链补成“新装即可跑 runtime”
+
+- `ai-team-bundle-v0.4.5-installer.tar.gz` 现在会随安装器一起带上 runtime 所需的 `yaml` 依赖，不再假设目标机器的 `python3` 预装 `PyYAML`。
+- `runtime_entry` 拉起 helper / prompt builder 时，会显式把安装器自带依赖带进子进程，避免新装环境只过 `install`、一跑 `runtime` 就断链。
+- 如果 runtime 模块导入失败，CLI 现在固定返回结构化 JSON 错误，不再二次炸成 `UnboundLocalError`。
+
 ## 影响范围
 
 - 影响：
@@ -71,10 +77,14 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 
 - 当前 runtime staged activation 定向验证：
   - `PYTHONPATH=dev python3 -m unittest tests.test_route_and_window_state_resolver tests.test_runtime_entry tests.test_min_install -q`
-  - `63 / 63` 通过
+  - `61 / 61` 通过
 - 当前 release/runtime 窄链验证：
   - `PYTHONPATH=dev python3 -m unittest tests.test_default_bundle.DefaultBundleContractTest.test_startup_template_requires_total_control_loading_before_any_other_chain tests.test_release_bundle.ReleaseBundleBuilderTest.test_builder_can_sync_tracked_stable_pointer_file_from_generated_release_metadata tests.test_launch_judgment_narrow_chain tests.test_bootstrap_scripts -q`
-  - `14 / 14` 通过
+  - `12 / 12` 通过
+- 当前 fresh install smoke：
+  - `PYTHONPATH=dev python3 -m unittest tests.test_bootstrap_smoke -q`
+  - `4 / 4` 通过
+  - 其中包含“隔离 Python 无 site `PyYAML` 仍能完成 `bootstrap -> install -> runtime total_control_entry`”回归
 - 真实 live proof：
   - `total_control_entry -> window_continue(01) -> read_receipt -> window_continue(10)` 全链通过
   - wrong host 调 `window_continue` 被固定拦截为 `当前不是对人窗口。`
@@ -83,7 +93,7 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 - 当前 tracked `bundle SHA256`：
   - `0b6d7719e7bd7d35b255da315934bee4f6a15ec51156fe932abb00baa1fb0453`
 - 当前 tracked `installer archive SHA256`：
-  - `f4a738d7644e45275e195a7561f1720bf6f5ca693d91e352680dbcb4e8edd8a9`
+  - `3bb13fd4100a9a602b2f87b1afa14baaa8585b582e5aca9fb1cc706ce27838a7`
 
 但这还不等于：
 
@@ -103,13 +113,13 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 - 当前发布阶段：
   - `ready-to-repackage-on-internal`
 - 当前已完成：
-  - 当前修复 commit `f33f108` 已进入本地 `main`
-  - `internal/main` 已更新到 `f33f108`
+  - 当前 runtime 修复已落到本地 `main` 工作树
   - repo-local carrier、提示词、tracked stable pointer 和 runtime/live proof 已对齐
 - 当前未完成：
-  - 尚未基于 `f33f108` 重新 build `v0.4.5` 正式五件套
+  - 尚未基于当前 fresh-install 修复重新 build `v0.4.5` 正式五件套
   - 尚未把这轮产物重新导出到 `/Users/mac/Documents/playground-Version/releases/v0.4.5/`
   - 尚未回写这一轮的 `source.json` / `release-index.md`
+  - 尚未完成当前修复对应的远端 fresh install smoke 与 live proof
   - `github` 辅助镜像本轮已暂停，不计入当前完成态
 - 因此当前准确口径是：
   - 上一轮 `v0.4.5` internal release 仍是已发布基线
