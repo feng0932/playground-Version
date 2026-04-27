@@ -62,11 +62,25 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 
 当前正式结果会在发版收口后回填到本节，包括：
 
-- release builder 产物路径
-- `bundle SHA256`
-- `installer archive SHA256`
-- tracked `stable-release.json` 一致性结果
-- 真实安装 smoke 结果与日志位置
+- release builder 产物路径：
+  - `/private/tmp/ai-team-v0.4.5-release-export`
+- 串行总回归：
+  - `python3 -m unittest tests.test_release_bundle tests.test_bootstrap_smoke tests.test_default_bundle tests.test_min_install tests.test_version_governance tests.test_launch_judgment_narrow_chain -q`
+  - `283 / 283` 通过
+- tracked `stable-release.json` 一致性：
+  - 已由 builder 反写并与当前 `v0.4.5` release metadata 一致
+- `bundle SHA256`：
+  - `54a3be1f6abeb17302d77851c82f55102a43814987b08d9383f28ba6efafd072`
+- `installer archive SHA256`：
+  - `f094ae92fb47d5bd94beaa186a97d0af406849596e6fddd55f20f76c07b538db`
+- 真实安装 smoke：
+  - 内网 `install-ai-team.sh` / `stable-release.json` / `ai-team-bundle-v0.4.5.release.json` 均返回 `HTTP 200`
+  - bootstrap 无参安装已通过 `stable-release.json` 实际解析到 `v0.4.5`
+  - `ai-team install --project-root <sample_project>` 成功
+  - `ai-team doctor --project-root <sample_project>` 返回 `machine_vs_project=same`
+  - 日志：`/tmp/ai-team-smoke-v0.4.5.log`
+  - 临时项目：`/tmp/ai-team-smoke-project-jDaHIE/sample_project`
+  - 临时 HOME：`/tmp/ai-team-smoke-home-lnOBV3`
 
 ## 不包含内容
 
@@ -78,16 +92,21 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 ## 正式发版结果
 
 - 当前发布阶段：
-  - `release-in-progress`
+  - `released-on-internal`
 - 正式远端：
-  - 内网版本仓：待回填
-  - GitHub 辅助镜像：待回填
+  - 内网版本仓：
+    - `main@b863c34`
+    - `http://192.168.1.152/yuhua/playground-Version`
+  - GitHub 辅助镜像：
+    - 当前机器未完成 push
+    - `git push https://github.com/...` 在 `github.com:443` 超时
+    - `git@github.com:...` 因 `publickey` 不可用失败
 - stable pointer：
-  - 待切换到 `v0.4.5`
+  - 已切换到 `v0.4.5`
 - bundle SHA256：
-  - 待回填
+  - `54a3be1f6abeb17302d77851c82f55102a43814987b08d9383f28ba6efafd072`
 - installer archive SHA256：
-  - 待回填
+  - `f094ae92fb47d5bd94beaa186a97d0af406849596e6fddd55f20f76c07b538db`
 
 正式远端安装入口（发版后使用）：
 
@@ -98,7 +117,7 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 - Windows 安装入口：
   - `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1`
 - GitHub 辅助镜像入口：
-  - 待回填
+  - 当前机器未完成镜像 push，暂不作为本轮正式可用入口
 
 ## 给大模型的继续执行提示
 
@@ -122,8 +141,9 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 
 当前版本已经进入的正式状态：
 
-- 当前目标是把 `v0.4.5` 的 repo-local 发布面、版本仓导出面和正式安装入口统一到同一版本语义。
-- 下一步正式动作必须基于 `v0.4.5` build 产物、`v0.4.5` tracked pointer 和真实远端可达结果执行。
+- `v0.4.5` 的 repo-local 发布面、版本仓导出面、tracked pointer 与真实内网安装入口已经统一到同一版本语义。
+- 当前正式可用入口是内网版本仓 raw URL。
+- GitHub 辅助镜像仍需在可达网络或可用 SSH key 条件下补推。
 
 ## 给大模型的新安装提示词（v0.4.5）
 
