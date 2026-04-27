@@ -1,10 +1,10 @@
 # ai-team-bundle v0.4.5 版本说明
 
-`v0.4.5` 是承接 `v0.4.4` 的正式发布版本；这一版不重开控制链，而是把当前脚本消费版本、stable pointer、release carrier、版本仓导出面和内网优先发布链统一收口到 `v0.4.5`。
+`v0.4.5` 是承接 `v0.4.4` 的当前正式发布链版本宿主；这一版不重开控制链，而是在既有 `v0.4.5` 发布面上继续收口当前脚本消费版本、stable pointer、版本仓导出面，以及这轮 `00` 只能派发、`01 / 10` 必须真实接管的运行时修复。
 
 如果用一句话概括这次变化：
 
-**`v0.4.5` 的目标不是新增一套发布规则，而是把当前已经验证过的 installer/runtime 主链、`01 / 10` 不漂移目标和内网优先发布面收成同一版本语义，避免继续由 `v0.4.4` 载体代演。**
+**`v0.4.5` 的目标不是新增一套发布规则，而是把当前已经验证过的 installer/runtime 主链、`01 / 10` 不漂移目标、真实接管链和内网优先发布面收成同一版本语义，避免继续由旧载体代演。**
 
 ## 版本定位
 
@@ -31,6 +31,13 @@
 - 正式 push 顺序以 `internal` 为主，`github` 为辅。
 - 正式安装入口优先使用内网版本仓原始下载 URL。
 - GitHub 保留为辅助镜像与外部补充可达性入口，不再作为当前版本唯一发布面。
+
+### 4. `00 -> 01 / 10` 的真实接管链继续收口到当前版本
+
+- 当前修复不再接受“总控嘴上派发了，但还在当前 root 窗口代演 `01 / 10`”。
+- `ai-team runtime --action total_control_entry` / `read_receipt` 命中 `01 / 10` 时，现在只允许登记派发，不再直接吐出 live role prompt。
+- 只有在真实主窗口执行 `ai-team runtime --action window_continue --current-host "<01|10>"` 后，`01 / 10` 才算正式接管。
+- 错误 host 调 `window_continue` 必须 fixed block 为 `当前不是对人窗口。`
 
 ## 影响范围
 
@@ -60,27 +67,29 @@ PYTHONPATH=dev python3 -m unittest tests.test_version_governance -q
 PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 ```
 
-当前正式结果会在发版收口后回填到本节，包括：
+当前这轮已真实确认的结果是：
 
-- release builder 产物路径：
-  - `/private/tmp/ai-team-v0.4.5-release-export`
-- 串行总回归：
-  - `python3 -m unittest tests.test_release_bundle tests.test_bootstrap_smoke tests.test_default_bundle tests.test_min_install tests.test_version_governance tests.test_launch_judgment_narrow_chain -q`
-  - `283 / 283` 通过
-- tracked `stable-release.json` 一致性：
-  - 已由 builder 反写并与当前 `v0.4.5` release metadata 一致
-- `bundle SHA256`：
-  - `54a3be1f6abeb17302d77851c82f55102a43814987b08d9383f28ba6efafd072`
-- `installer archive SHA256`：
-  - `f094ae92fb47d5bd94beaa186a97d0af406849596e6fddd55f20f76c07b538db`
-- 真实安装 smoke：
-  - 内网 `install-ai-team.sh` / `stable-release.json` / `ai-team-bundle-v0.4.5.release.json` 均返回 `HTTP 200`
-  - bootstrap 无参安装已通过 `stable-release.json` 实际解析到 `v0.4.5`
-  - `ai-team install --project-root <sample_project>` 成功
-  - `ai-team doctor --project-root <sample_project>` 返回 `machine_vs_project=same`
-  - 日志：`/tmp/ai-team-smoke-v0.4.5.log`
-  - 临时项目：`/tmp/ai-team-smoke-project-jDaHIE/sample_project`
-  - 临时 HOME：`/tmp/ai-team-smoke-home-lnOBV3`
+- 当前 runtime staged activation 定向验证：
+  - `PYTHONPATH=dev python3 -m unittest tests.test_route_and_window_state_resolver tests.test_runtime_entry tests.test_min_install -q`
+  - `63 / 63` 通过
+- 当前 release/runtime 窄链验证：
+  - `PYTHONPATH=dev python3 -m unittest tests.test_default_bundle.DefaultBundleContractTest.test_startup_template_requires_total_control_loading_before_any_other_chain tests.test_release_bundle.ReleaseBundleBuilderTest.test_builder_can_sync_tracked_stable_pointer_file_from_generated_release_metadata tests.test_launch_judgment_narrow_chain tests.test_bootstrap_scripts -q`
+  - `14 / 14` 通过
+- 真实 live proof：
+  - `total_control_entry -> window_continue(01) -> read_receipt -> window_continue(10)` 全链通过
+  - wrong host 调 `window_continue` 被固定拦截为 `当前不是对人窗口。`
+- 当前 tracked `stable-release.json`：
+  - 已与当前 repo-local `v0.4.5` bundle 内容重新对齐
+- 当前 tracked `bundle SHA256`：
+  - `0b6d7719e7bd7d35b255da315934bee4f6a15ec51156fe932abb00baa1fb0453`
+- 当前 tracked `installer archive SHA256`：
+  - `f4a738d7644e45275e195a7561f1720bf6f5ca693d91e352680dbcb4e8edd8a9`
+
+但这还不等于：
+
+- 已基于当前修复重新 build 正式五件套
+- 已把新一轮 `v0.4.5` 产物重新导出到 `/Users/mac/Documents/playground-Version/releases/v0.4.5/`
+- 已完成当前修复对应的远端安装 smoke
 
 ## 不包含内容
 
@@ -92,21 +101,19 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 ## 正式发版结果
 
 - 当前发布阶段：
-  - `released-on-internal`
-- 正式远端：
-  - 内网版本仓：
-    - `main@b863c34`
-    - `http://192.168.1.152/yuhua/playground-Version`
-  - GitHub 辅助镜像：
-    - 当前机器未完成 push
-    - `git push https://github.com/...` 在 `github.com:443` 超时
-    - `git@github.com:...` 因 `publickey` 不可用失败
-- stable pointer：
-  - 已切换到 `v0.4.5`
-- bundle SHA256：
-  - `54a3be1f6abeb17302d77851c82f55102a43814987b08d9383f28ba6efafd072`
-- installer archive SHA256：
-  - `f094ae92fb47d5bd94beaa186a97d0af406849596e6fddd55f20f76c07b538db`
+  - `ready-to-repackage-on-internal`
+- 当前已完成：
+  - 当前修复 commit `f33f108` 已进入本地 `main`
+  - `internal/main` 已更新到 `f33f108`
+  - repo-local carrier、提示词、tracked stable pointer 和 runtime/live proof 已对齐
+- 当前未完成：
+  - 尚未基于 `f33f108` 重新 build `v0.4.5` 正式五件套
+  - 尚未把这轮产物重新导出到 `/Users/mac/Documents/playground-Version/releases/v0.4.5/`
+  - 尚未回写这一轮的 `source.json` / `release-index.md`
+  - `github` 辅助镜像本轮已暂停，不计入当前完成态
+- 因此当前准确口径是：
+  - 上一轮 `v0.4.5` internal release 仍是已发布基线
+  - 但当前这次 runtime 修复，对应的新一轮正式打包发版还没有完成
 
 正式远端安装入口（发版后使用）：
 
@@ -130,6 +137,7 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 5. `dev/install/stable-release.json`
 6. `dev/docs/releases/ai-team-bundle-v0.4.5-release-note.md`
 7. `dev/tests/test_launch_judgment_narrow_chain.py`
+8. `dev/v0.4.5/140-v0.4.5-中文发版执行说明书.md`
 
 不要误判的 truth boundary：
 
@@ -204,6 +212,7 @@ Invoke-WebRequest -Uri "http://192.168.1.152/yuhua/playground-Version/raw/branch
 powershell -ExecutionPolicy Bypass -File $script -Version v0.4.5 *>&1 | Tee-Object -FilePath "$env:TEMP\\ai-team-install-v0.4.5.log"
 
 安装后继续执行：
+$env:Path = "$HOME\\.ai-team\\bin;$env:Path"
 where.exe ai-team
 ai-team install --project-root .
 ai-team doctor --project-root .
@@ -285,6 +294,7 @@ Invoke-WebRequest -Uri "http://192.168.1.152/yuhua/playground-Version/raw/branch
 powershell -ExecutionPolicy Bypass -File $script -Version v0.4.5 *>&1 | Tee-Object -FilePath "$env:TEMP\\ai-team-update-v0.4.5.log"
 
 更新后继续执行：
+$env:Path = "$HOME\\.ai-team\\bin;$env:Path"
 where.exe ai-team
 ai-team doctor
 ai-team install --project-root .
