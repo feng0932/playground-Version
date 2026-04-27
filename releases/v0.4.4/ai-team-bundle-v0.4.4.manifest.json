@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "bundle_id": "default-methodology-bundle",
+  "bundle_version": "v0.4.4",
+  "bundle_source": "local-default-bundle",
+  "channel": "stable",
+  "startup_prompt": "startup/00-编排-总控.startup.txt",
+  "agents_root": "agents",
+  "assets_root": "assets",
+  "org_skill_root": "org_skills",
+  "org_skill_readme": "org_skills/README.md",
+  "control_plane_agents": [
+    "00-编排-总控.agent.md",
+    "01-编排-初始化项目包.agent.md",
+    "02-编排-安装与运行检查.agent.md"
+  ],
+  "project_skeleton_files": [
+    ".gitignore",
+    "AGENTS.md",
+    "01-项目商业说明.md",
+    "02-用户画像与权限架构.md",
+    "03-系统拓扑与核心名词表.md",
+    "05-项目级原型与高保真标准.md",
+    "06-产品级共享资产底座.md",
+    "00-项目包/00-项目包索引.md",
+    "00-项目包/02-工程交接/README.md",
+    "01-模块执行包/00-模块索引.md",
+    "01-模块执行包/模块模板/00-说明.md",
+    "01-模块执行包/模块模板/01-PRD/01-模块PRD.md",
+    "01-模块执行包/模块模板/01-PRD/02-模块流程图与人类确认.md",
+    "01-模块执行包/模块模板/02-工程交接/README.md",
+    "docs/00-说明.md",
+    "docs/01-跨模块补充资料/README.md",
+    "docs/01-跨模块补充资料/local/.gitkeep",
+    "docs/01-跨模块补充资料/published/.gitkeep",
+    "80-完整提交包/00-提交状态.json",
+    "80-完整提交包/00-提交说明.md",
+    "80-完整提交包/01-合并PRD/00-PRD索引.md",
+    "80-完整提交包/01-合并PRD/01-合并PRD阅读层.md",
+    "80-完整提交包/02-原型索引/00-原型入口.md",
+    "80-完整提交包/03-合并评审记录/00-评审索引.md",
+    "80-完整提交包/03-合并评审记录/30-结果-AI深审记录.md",
+    "assets/20-项目执行文件包目录标准.md"
+  ],
+  "project_template_scripts": [
+    "scripts/sync_submission_status.py",
+    "scripts/check_submission_consistency.py",
+    "scripts/check_engineering_handoff_readiness.py",
+    "scripts/check_final_delivery_gate.py",
+    "scripts/check_publish_boundary.py"
+  ],
+  "execution_agents": [
+    "10-执行-产品专家.agent.md",
+    "11-执行-管理后台原型专家.agent.md",
+    "13-执行-手机端原型专家.agent.md",
+    "14-执行-PC端原型专家.agent.md"
+  ],
+  "rule_files": [
+    "产品路径约束.yaml",
+    "产品结构约束.yaml",
+    "反迎合与证据优先规则.yaml"
+  ],
+  "contract_files": [
+    "dispatch_contract_registry.json"
+  ],
+  "template_files": [
+    "32-过程-沟通记录与结论回写模板.md",
+    "33-模板-产品PRD.md",
+    "34-模板-PRD页面字段描述.md",
+    "35-过程-总控复核清单模板.md",
+    "36-模板-合并PRD阅读层.md",
+    "37-模板-工程交接职责矩阵.md",
+    "38-模板-工程交接门槛清单.md",
+    "39-模板-UIUE高保真非闭合交回最小要求.md"
+  ],
+  "review_agents": [
+    "20-审查-门禁审查.agent.md",
+    "21-审查-产品审查.agent.md",
+    "22-审查-原型审查.agent.md",
+    "23-审查-反向审查.agent.md",
+    "24-审查-跨角色预审.agent.md",
+    "25-审查-测试专家.agent.md"
+  ],
+  "review_template_files": [
+    "30-结果-AI深审记录模板.md",
+    "31-结果-跨角色预审讨论清单.md"
+  ],
+  "internal_org_skill_packages": [
+    "00-dispatch-orchestration"
+  ],
+  "skills": [
+    "01-prd-compliance-review",
+    "02-prd-requirement-comprehension",
+    "03-submission-status-governance"
+  ]
+}
