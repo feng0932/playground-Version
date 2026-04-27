@@ -147,6 +147,16 @@ PYTHONPATH=dev python3 -m unittest tests.test_launch_judgment_narrow_chain -q
 
 ## 给大模型的新安装提示词（v0.4.5）
 
+先选设备，再选提示词：
+
+- 当前执行设备如果是 `macOS`，只使用下面的 `macOS` 提示词。
+- 当前执行设备如果是 `Windows`，只使用下面的 `Windows` 提示词。
+- 不允许把 `macOS` 提示词发到 `Windows` 机器，也不允许把 `Windows` 提示词发到 `macOS` 机器。
+- 如果当前还不知道设备类型，先让执行方只回答：
+  - 当前机器是 `macOS` 还是 `Windows`
+  - 当前可用的是 `bash/zsh` 还是 `PowerShell`
+  在设备未确认前，不要提前下发下面四段正式提示词。
+
 ### macOS
 
 ```text
@@ -215,6 +225,16 @@ Get-ChildItem .ai-team\\state -Force -ErrorAction SilentlyContinue
 ```
 
 ## 给大模型的更新提示词（v0.4.5）
+
+先选设备，再选提示词：
+
+- 当前执行设备如果是 `macOS`，只使用下面的 `macOS` 更新提示词。
+- 当前执行设备如果是 `Windows`，只使用下面的 `Windows` 更新提示词。
+- 不允许把 `macOS` 更新提示词发到 `Windows` 机器，也不允许把 `Windows` 更新提示词发到 `macOS` 机器。
+- 如果当前还不知道设备类型，先让执行方只回答：
+  - 当前机器是 `macOS` 还是 `Windows`
+  - 当前可用的是 `bash/zsh` 还是 `PowerShell`
+  在设备未确认前，不要提前下发下面两段正式更新提示词。
 
 ### macOS
 
