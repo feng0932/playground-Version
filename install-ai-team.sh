@@ -3,9 +3,11 @@
 set -euo pipefail
 
 VERSION="${1:-}"
-REPO_OWNER="${REPO_OWNER:-feng0932}"
 REPO_NAME="${REPO_NAME:-playground-Version}"
-DEFAULT_STABLE_RELEASE_URL="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/stable-release.json"
+REPO_BRANCH="${REPO_BRANCH:-main}"
+REPO_WEB_BASE_URL="${REPO_WEB_BASE_URL:-http://192.168.1.152/yuhua/playground-Version}"
+REPO_WEB_BASE_URL="${REPO_WEB_BASE_URL%/}"
+DEFAULT_STABLE_RELEASE_URL="${REPO_WEB_BASE_URL}/raw/branch/${REPO_BRANCH}/stable-release.json"
 
 INSTALL_BASE="${HOME}/.ai-team"
 BIN_DIR="${INSTALL_BASE}/bin"
@@ -21,7 +23,7 @@ if [[ -n "${AI_TEAM_RELEASE_METADATA_URL:-}" ]]; then
   RELEASE_METADATA_URL="${AI_TEAM_RELEASE_METADATA_URL}"
 elif [[ -n "${VERSION}" ]]; then
   TAG="ai-team-bundle-${VERSION}"
-  RELEASE_METADATA_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${TAG}/${TAG}.release.json"
+  RELEASE_METADATA_URL="${REPO_WEB_BASE_URL}/raw/branch/${REPO_BRANCH}/releases/${VERSION}/${TAG}.release.json"
 else
   RELEASE_METADATA_URL="${AI_TEAM_STABLE_RELEASE_URL:-${DEFAULT_STABLE_RELEASE_URL}}"
 fi

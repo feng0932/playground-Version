@@ -4,9 +4,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$RepoOwner = if ($env:REPO_OWNER) { $env:REPO_OWNER } else { "feng0932" }
 $RepoName = if ($env:REPO_NAME) { $env:REPO_NAME } else { "playground-Version" }
-$DefaultStableReleaseUrl = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/main/stable-release.json"
+$RepoBranch = if ($env:REPO_BRANCH) { $env:REPO_BRANCH } else { "main" }
+$RepoWebBaseUrl = if ($env:REPO_WEB_BASE_URL) { $env:REPO_WEB_BASE_URL } else { "http://192.168.1.152/yuhua/playground-Version" }
+$RepoWebBaseUrl = $RepoWebBaseUrl.TrimEnd("/")
+$DefaultStableReleaseUrl = "$RepoWebBaseUrl/raw/branch/$RepoBranch/stable-release.json"
 
 $InstallBase = Join-Path $HOME ".ai-team"
 $BinDir = Join-Path $InstallBase "bin"
@@ -20,7 +22,7 @@ if ($env:AI_TEAM_RELEASE_METADATA_URL) {
     $ReleaseMetadataUrl = $env:AI_TEAM_RELEASE_METADATA_URL
 } elseif (-not [string]::IsNullOrWhiteSpace($Version)) {
     $Tag = "ai-team-bundle-$Version"
-    $ReleaseMetadataUrl = "https://github.com/$RepoOwner/$RepoName/releases/download/$Tag/$Tag.release.json"
+    $ReleaseMetadataUrl = "$RepoWebBaseUrl/raw/branch/$RepoBranch/releases/$Version/$Tag.release.json"
 } else {
     $ReleaseMetadataUrl = if ($env:AI_TEAM_STABLE_RELEASE_URL) { $env:AI_TEAM_STABLE_RELEASE_URL } else { $DefaultStableReleaseUrl }
 }

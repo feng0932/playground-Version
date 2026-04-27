@@ -35,15 +35,15 @@
 macOS:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/feng0932/playground-Version/main/install-ai-team.sh | bash
+curl -fsSL http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.sh | bash
 ```
 
 Windows:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/feng0932/playground-Version/main/install-ai-team.ps1 -UseBasicParsing | iex"
+powershell -ExecutionPolicy Bypass -Command "iwr http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1 -UseBasicParsing | iex"
 ```
 
 Stable pointer:
 
-- `https://raw.githubusercontent.com/feng0932/playground-Version/main/stable-release.json`
+- `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/stable-release.json`

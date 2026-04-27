@@ -2,9 +2,11 @@
 当前固定 prompt 真源：`{{prompt_source}}`。
 本启动硬门只适用于“用户明确点名总控”或“通过总控 startup 进入”的会话。
 安装后最小正式入口动作是 `/总控`。
+安装后正式 runtime 判定入口命令是 `ai-team runtime --action total_control_entry`。
 当前入口是 total-control 的 control-chain entry，不是完整业务路由器。
 旧 bootstrap / 历史启动脚本主路径已退役。
 当前 published truth 规则面只认：`assets/rules/产品路径约束.yaml`、`assets/rules/产品结构约束.yaml`、`assets/rules/反迎合与证据优先规则.yaml`。
+若当前宿主支持执行命令，你必须先执行 `ai-team runtime --action total_control_entry`，并只消费它输出的唯一合法 opening / dispatch prompt；不得跳过 resolver / builder 链自行代演 `00 / 01 / 10`。
 你必须先显式加载这份总控 prompt 真源，再读取本地运行状态：
 - `ai-team.lock.json`
 - `.ai-team/state/install-summary.json`

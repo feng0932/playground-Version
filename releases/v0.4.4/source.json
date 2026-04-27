@@ -1,7 +1,7 @@
 {
   "source_repo": "Playground-English",
-  "source_branch": "release/v0.4.4-freeze",
-  "source_commit": "82ad397aacaf01f28112d853f927d31acd9ffb16",
+  "source_branch": "v0.4.5",
+  "source_commit": "691ef3c439e5d4a9d2f4d348727f994a50927afc",
   "bundle_version": "v0.4.4",
-  "exported_at": "2026-04-27T09:49:29.533885+08:00"
+  "exported_at": "2026-04-27T18:15:32+08:00"
 }
