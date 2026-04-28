@@ -17,7 +17,7 @@
 
 | version | channel | status | source_commit | artifact_root | release_note | notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `v0.4.6` | `release` | `exported` | `fe69a35dabab2ebdf83bd04c12fc546bf7c33483` | `releases/v0.4.6/` | `releases/v0.4.6/release-note.md` | Internal raw `v0.4.6` five-piece bundle exported; waiting for tag/release page sync |
+| `v0.4.6` | `release` | `released` | `fe69a35dabab2ebdf83bd04c12fc546bf7c33483` | `releases/v0.4.6/` | `releases/v0.4.6/release-note.md` | Internal raw assets and `/releases/tag/ai-team-bundle-v0.4.6` page verified |
 | `v0.4.5` | `release` | `released` | `c963f1c8aa8ee9b85bdbfb831ecff6391052fb5a` | `releases/v0.4.5/` | `releases/v0.4.5/release-note.md` | Dev-host regression `96 / 96` passed; release carrier refreshed; internal raw install entry kept at current `v0.4.5` bundle |
 | `v0.4.4` | `release` | `released` | `691ef3c439e5d4a9d2f4d348727f994a50927afc` | `releases/v0.4.4/` | `releases/v0.4.4/release-note.md` | Internal Gitea raw republish from `v0.4.5` |
 | `v0.4.2` | `release` | `released` | `a051f12428410d4e8dd10fee1a2c93c112c7b8d9` | `releases/v0.4.2/` | `releases/v0.4.2/release-note.md` | GitHub Release `ai-team-bundle-v0.4.2` hotfix-overwrite published |
