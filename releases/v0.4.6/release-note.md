@@ -1,101 +1,116 @@
-# ai-team-bundle v0.4.6 版本说明
+# v0.4.6 中文发版说明
 
-`v0.4.6` 只做一件事：把 `v0.4.5` 里后加进去的“偷偷激活窗口”那层拿掉，收回到原来要的主链上，同时把安装后的 runtime 和当前版本真正对齐。
+## 0. 版本定位
 
-## 版本定位
+`v0.4.6` 是 `v0.4.5` 之后的稳定线候选，目标是把现场暴露出的控制链和原型交付边界问题收回到 published truth、runtime gate 和测试里。
 
-- `v0.4.6` 不是继续给 `01 / 10` 补更多话术，而是把显式派发、真实接管、安装后 runtime 对齐这三件事收回到原来的正式主链上。
-- 这一版保留 `00 -> 01 / 10 -> 00` 的主链，保留 `window_continue`，但把它收回到“只负责续轮”的语义。
+这份 release note 是发版说明主编辑源。远端资产上传、公开 stable pointer 同步、install / doctor / runtime 验证完成前，它只能作为发版准备说明，不能单独证明正式发布完成。
 
-## 这个版本做了什么
+## 1. 这个版本做了什么 / 本次变化
 
-### 1. 派发必须是真的派发
+`v0.4.6` 这次先收住三件事：
 
-- `00` 还是唯一总入口，但它只负责判断、显式派发、收回回执和重判。
-- `01 / 10` 只有收到 `00` 的显式派发后，才算真正接管。
-- 不再允许靠 hidden activation / unlock 这一层，在主线程里假装已经切到子窗口。
+第一件事，是把 `v0.4.5` 后加进正式链路的 hidden activation / unlock / window 私加层退掉。
 
-### 2. `window_continue` 只负责续轮，不再负责偷切窗
+这版冻结后的主链重新回到人原来要的口径：
 
-- `window_continue` 继续保留，但语义收回到 continuation-only。
-- 如果当前窗口没 materialize，或者当前重建出来的窗口和原 snapshot 对不上，就直接回 `/总控` 重新派发。
-- 这次要收住的不是“多一层话术”，而是“续轮只能续原来的可信窗口，不能借续轮偷换窗口”。
+1. `00` 只负责总控、判路、显式派发、收回和重判。
+2. `01 / 10` 被 `00` 显式派发后，直接对人。
+3. 除了 `01 / 10`，其他子 agent 仍要显式派发，但不能对人。
+4. `01 / 10` 结束后，把结果交回 `00`。
 
-### 3. 安装后的 runtime 结构真正回到当前版本
+第二件事，是把 `10` 的主问职责做成硬门。
 
-- 修掉了“机器 launcher 升了，但项目 runtime 还停在旧版本结构里”的问题。
-- 现在 `ai-team runtime --action total_control_entry` 和 `ai-team runtime --action window_continue` 都按当前版本结构落地。
-- `ai-team doctor` 能看到 machine launcher 和项目 runtime 都对齐到当前版本链路。
+进入模块正文或原型链前，`10` 必须收齐 4 组信息：
 
-### 4. 这版已经验证到哪里
+1. 核心问题与成功标准
+2. 本轮做什么 / 不做什么
+3. 主链 / 分支 / 异常 / 恢复
+4. 页面 / 状态 / 字段 / 验收
 
-本轮至少已经通过：
+任何一组没收齐，都不能进入 PRD 正文收口，也不能进入原型前确认。
 
-```bash
-cd /Users/mac/Documents/Playground-English/dev
-python3 -m unittest tests.test_release_bundle -q
-python3 -m unittest tests.test_bootstrap_smoke -q
-python3 -m unittest tests.test_default_bundle -q
-```
+第三件事，是把原型前低保真做成确认门。
 
-结果：
+固定顺序是：
 
-- `tests.test_release_bundle`：`15 / 15` 通过
-- `tests.test_bootstrap_smoke`：`5 / 5` 通过
-- `tests.test_default_bundle`：`204 / 204` 通过
+> 聊天内低保真预演 -> 人确认 -> 最小正式回执 -> 才能进原型设计
 
-### 5. 这版暂不包含什么
+低保真必须是更像页面的粗稿，例如页面块图、线框块图、ASCII 页面草图；只给页面清单、状态清单、文字提纲不算完成。
 
-- 不包含 `historical_project` 正向 classifier 闭环。
-- 不包含 live transcript 的最新现场补证。
-- 不包含新的 worker 直连对人能力。
+本次冻结候选合并还审掉了旧 `stable-release.json` 的包 hash。旧 hash 不能继续代表当前冻结候选内容。
 
-## 正式发版结果
+旧 hash：
 
-- 当前正式目标版本：`v0.4.6`
-- 当前验证结果：
-  - `tests.test_release_bundle`：`15 / 15` 通过
-  - `tests.test_bootstrap_smoke`：`5 / 5` 通过
-  - `tests.test_default_bundle`：`204 / 204` 通过
+- `bundle_sha256`
+  - `8154233f2d92cb44c8c49dae8c2d9820c529d850048a3dd85ea54ab7e5ee3de0`
+- `installer_archive_sha256`
+  - `bffe6e919e0526b94f30945f205a06b722698d89dad73b0bd99494a296cbe78d`
 
-正式远端安装入口：
+当前本地重新构建后的 hash：
 
-- stable pointer：
-  - `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/stable-release.json`
-- macOS 安装入口：
-  - `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.sh`
-- Windows 安装入口：
-  - `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1`
-- release metadata URL：
-  - `http://192.168.1.152/yuhua/playground-Version/raw/branch/main/releases/v0.4.6/ai-team-bundle-v0.4.6.release.json`
+- `bundle SHA256`
+  - `e2228479d1b0241d920e01d00d22355c4ce551a6c13d682258ee5eb3121fb2af`
+- `installer archive SHA256`
+  - `bfcd7cdaf8d64bec05dcdecb47f0842295a8300fa35c1b924d707dab5a6a4372`
 
-## 给大模型的继续执行提示
+当前准确口径：
 
-- 继续执行前先读：
-  - `README.md`
-  - `install/stable-release.json`
-  - `docs/releases/ai-team-bundle-v0.4.6-release-note.md`
-- 不要误判：
-  - `install/default_bundle/` 是当前 bundle 真源
-  - `install/stable-release.json` 是开发仓跟踪的 stable pointer 真源
-  - `/Users/mac/Documents/playground-Version/` 只承接发布投影
-- 当前正式状态：
-  - `v0.4.6` 的本地构建与回归已转绿
-  - 下一步是正式 build、导出 `releases/v0.4.6/`、切 stable pointer、同步 tag 和 release 页面
+- `v0.4.6` 已形成 repo-local 冻结候选。
+- tracked `stable-release.json` 已按当前本地构建重算 hash。
+- 远端 release 资产还没有在本轮被上传验证。
+- fresh live transcript 还没有在本轮补齐。
 
-## 给大模型的新安装提示词（v0.4.6）
+不能把这份文件说成：
 
-### macOS
+> `v0.4.6` 已正式远端发布，或者已经 `live-thread verified`。
+
+## 2. 让大模型去安装和更新的提示词
+
+### 不包含内容
+
+本版本说明不包含下面结论：
+
+1. 不声明 fresh live transcript 已通过。
+2. 不声明 Mac / Windows 现场问题已经被真实新包证明解决。
+3. 不把仓内 published truth 合入说成远端正式发布完成。
+4. 不把 release note 当成 bundle 真源；bundle 真源仍是 `dev/install/default_bundle/`。
+
+### 正式发版结果
+
+当前发版准备结果：
+
+1. 开发仓 `main` 已包含 `v0.4.6` 包 A 和包 B 的源码状态。
+2. 本地 release 五件套已重新构建。
+3. tracked `stable-release.json` 已由 builder 反写为当前 hash。
+
+仍需完成后才能宣称正式发版完成：
+
+1. 发布仓远端 `releases/v0.4.6/` 资产可访问。
+2. 发布仓远端根级 `stable-release.json` 可访问且指向当前 hash。
+3. install / doctor / runtime 最小验证通过。
+
+下面提示词只能在远端 `releases/v0.4.6/` 资产上传、公开 `stable-release.json` 同步、远端抽样验证通过后使用。
+
+如果对方设备不明确，先问清楚三件事：
+
+1. 是 `macOS` 还是 `Windows`
+2. 用的是 `bash/zsh` 还是 `PowerShell`
+3. 当前机器有没有网络和文件写权限
+
+### 给大模型的新安装提示词
+
+#### macOS
 
 ```text
-你现在要在本机实际执行 ai-team v0.4.6 的正式新安装，不要只解释步骤，要实际运行命令并输出完整日志。
+你现在要在本机实际执行 ai-team v0.4.6 的正式新安装，不要只解释步骤，要真的运行命令，并把关键结果输出出来。
 
 要求：
-1. 先确认你有 shell、网络、文件写权限；如果没有，直接说明无法执行。
-2. 使用正式远端安装入口执行安装，不要手工拼装 bundle。
+1. 先确认当前机器有 shell、网络和文件写权限；如果没有，直接说明不能执行。
+2. 使用正式安装入口，不要手工拼装 bundle。
 3. 保留完整 stdout/stderr。
-4. 安装后继续执行校验命令，并输出结果。
-5. 如果任一步失败，立即停止。
+4. 安装完成后继续执行校验命令。
+5. 任何一步失败都立即停止，不要假装成功。
 
 执行命令：
 curl -fsSL http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.sh | bash -s -- v0.4.6 2>&1 | tee /tmp/ai-team-install-v0.4.6.log
@@ -111,7 +126,7 @@ cat .ai-team/runtime.json 2>/dev/null || true
 ls -la .ai-team/state 2>/dev/null || true
 
 最终必须输出：
-- 是否真的执行了新安装
+- 是否真的完成了新安装
 - 实际安装到的 bundle_version / release_tag
 - ai-team doctor 的关键字段
 - ai-team runtime --action total_control_entry 的结果
@@ -120,21 +135,21 @@ ls -la .ai-team/state 2>/dev/null || true
 - /tmp/ai-team-install-v0.4.6.log 的关键片段
 ```
 
-### Windows
+#### Windows
 
 ```text
-你现在要在本机实际执行 ai-team v0.4.6 的正式新安装，不要只解释步骤，要实际运行命令并输出完整日志。
+你现在要在本机实际执行 ai-team v0.4.6 的正式新安装，不要只解释步骤，要真的运行命令，并把关键结果输出出来。
 
 要求：
-1. 先确认你有 PowerShell、网络、文件写权限；如果没有，直接说明无法执行。
-2. 使用正式远端安装入口执行安装，不要手工拼装 bundle。
+1. 先确认当前机器有 PowerShell、网络和文件写权限；如果没有，直接说明不能执行。
+2. 使用正式安装入口，不要手工拼装 bundle。
 3. 保留完整 stdout/stderr。
-4. 安装后继续执行校验命令，并输出结果。
-5. 如果任一步失败，立即停止。
+4. 安装完成后继续执行校验命令。
+5. 任何一步失败都立即停止，不要假装成功。
 
 执行命令：
 $script = Join-Path $env:TEMP "install-ai-team-v0.4.6.ps1"
-Invoke-WebRequest -Uri "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1" -OutFile $script
+Invoke-WebRequest http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1 -UseBasicParsing -OutFile $script
 powershell -ExecutionPolicy Bypass -File $script -Version v0.4.6 *>&1 | Tee-Object -FilePath "$env:TEMP\\ai-team-install-v0.4.6.log"
 
 安装后继续执行：
@@ -148,7 +163,7 @@ Get-Content .ai-team\\runtime.json -ErrorAction SilentlyContinue
 Get-ChildItem .ai-team\\state -Force -ErrorAction SilentlyContinue
 
 最终必须输出：
-- 是否真的执行了新安装
+- 是否真的完成了新安装
 - 实际安装到的 bundle_version / release_tag
 - ai-team doctor 的关键字段
 - ai-team runtime --action total_control_entry 的结果
@@ -157,20 +172,20 @@ Get-ChildItem .ai-team\\state -Force -ErrorAction SilentlyContinue
 - $env:TEMP\\ai-team-install-v0.4.6.log 的关键片段
 ```
 
-## 给大模型的更新提示词（v0.4.6）
+### 给大模型的更新提示词
 
-### macOS
+#### macOS
 
 ```text
-你现在要在本机实际执行 ai-team v0.4.6 的正式更新，不要只解释步骤，要实际运行命令并输出完整日志。
+你现在要在本机实际执行 ai-team v0.4.6 的正式更新，不要只解释步骤，要真的运行命令，并把关键结果输出出来。
 
 要求：
-1. 先确认你有 shell、网络、文件写权限；如果没有，直接说明无法执行。
+1. 先确认当前机器有 shell、网络和文件写权限；如果没有，直接说明不能执行。
 2. 更新前先采集旧状态。
-3. 使用正式远端安装入口执行更新，不要手工拼装 bundle。
+3. 使用正式安装入口，不要手工拼装 bundle。
 4. 保留完整 stdout/stderr。
-5. 更新后继续执行校验命令，并输出结果。
-6. 如果任一步失败，立即停止。
+5. 更新完成后继续执行校验命令。
+6. 任何一步失败都立即停止，不要假装成功。
 
 更新前先执行：
 export PATH="$HOME/.ai-team/bin:$PATH"
@@ -190,8 +205,9 @@ cat ai-team.lock.json 2>/dev/null || true
 cat .ai-team/runtime.json 2>/dev/null || true
 
 最终必须输出：
-- 是否真的执行了更新
-- 更新前后的 ai-team 命令可用性与 ai-team doctor 关键字段
+- 是否真的完成了更新
+- 更新前后的 which ai-team
+- 更新前后的 ai-team doctor 关键字段
 - 实际安装到的 bundle_version / release_tag
 - ai-team runtime --action total_control_entry 的结果
 - ai-team.lock.json 和 .ai-team/runtime.json 的关键内容
@@ -199,18 +215,18 @@ cat .ai-team/runtime.json 2>/dev/null || true
 - /tmp/ai-team-update-v0.4.6.log 的关键片段
 ```
 
-### Windows
+#### Windows
 
 ```text
-你现在要在本机实际执行 ai-team v0.4.6 的正式更新，不要只解释步骤，要实际运行命令并输出完整日志。
+你现在要在本机实际执行 ai-team v0.4.6 的正式更新，不要只解释步骤，要真的运行命令，并把关键结果输出出来。
 
 要求：
-1. 先确认你有 PowerShell、网络、文件写权限；如果没有，直接说明无法执行。
+1. 先确认当前机器有 PowerShell、网络和文件写权限；如果没有，直接说明不能执行。
 2. 更新前先采集旧状态。
-3. 使用正式远端安装入口执行更新，不要手工拼装 bundle。
+3. 使用正式安装入口，不要手工拼装 bundle。
 4. 保留完整 stdout/stderr。
-5. 更新后继续执行校验命令，并输出结果。
-6. 如果任一步失败，立即停止。
+5. 更新完成后继续执行校验命令。
+6. 任何一步失败都立即停止，不要假装成功。
 
 更新前先执行：
 $env:Path = "$HOME\\.ai-team\\bin;$env:Path"
@@ -219,7 +235,7 @@ ai-team doctor --project-root . *>&1
 
 执行命令：
 $script = Join-Path $env:TEMP "install-ai-team-v0.4.6.ps1"
-Invoke-WebRequest -Uri "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1" -OutFile $script
+Invoke-WebRequest http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1 -UseBasicParsing -OutFile $script
 powershell -ExecutionPolicy Bypass -File $script -Version v0.4.6 *>&1 | Tee-Object -FilePath "$env:TEMP\\ai-team-update-v0.4.6.log"
 
 更新后继续执行：
@@ -232,8 +248,9 @@ Get-Content ai-team.lock.json -ErrorAction SilentlyContinue
 Get-Content .ai-team\\runtime.json -ErrorAction SilentlyContinue
 
 最终必须输出：
-- 是否真的执行了更新
-- 更新前后的 ai-team 命令可用性与 ai-team doctor 关键字段
+- 是否真的完成了更新
+- 更新前后的 where.exe ai-team
+- 更新前后的 ai-team doctor 关键字段
 - 实际安装到的 bundle_version / release_tag
 - ai-team runtime --action total_control_entry 的结果
 - ai-team.lock.json 和 .ai-team\\runtime.json 的关键内容
