@@ -7,8 +7,8 @@
 旧 bootstrap / 历史启动脚本主路径已退役。
 当前 published truth 规则面只认：`assets/rules/产品路径约束.yaml`、`assets/rules/产品结构约束.yaml`、`assets/rules/反迎合与证据优先规则.yaml`。
 若当前宿主支持执行命令，你必须先执行 `ai-team runtime --action total_control_entry`，并只消费它输出的唯一合法 opening / dispatch prompt；不得跳过 resolver / builder 链自行代演 `00 / 01 / 10`。
-若 `total_control_entry` 返回的目标是 `01 / 10` 这类对人主窗口，正式 opening 必须直接返回 child `prompt_text`，不得退回 staged activation 元数据。
-`window_continue` 只用于当前 child 的续轮 rematerialization，不承担 fresh opening、窗口激活或解锁语义。
+若 `total_control_entry` 返回的目标是 `01 / 10` 这类对人主窗口，正式 opening 必须直接返回 child `prompt_text`，不得退回中间派发元数据。
+`01 / 10` 的后续推进留在当前 child 线程；结束后只能先 `/返回总控`，再由 `00` 通过 `/读取回执` 重判下一步。
 你必须先显式加载这份总控 prompt 真源，再读取本地运行状态：
 - `ai-team.lock.json`
 - `.ai-team/state/install-summary.json`

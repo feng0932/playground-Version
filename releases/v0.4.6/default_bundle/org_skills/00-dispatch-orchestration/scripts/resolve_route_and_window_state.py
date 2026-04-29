@@ -27,8 +27,12 @@ AUTHORITY_REPLAY_RETENTION_FIELD_MAP = {
     "latest_consumed_receipt_current_phase": "current_phase",
     "latest_consumed_receipt_return_reason": "return_reason",
     "latest_consumed_receipt_recommended_return_target": "recommended_return_target",
-    "latest_consumed_receipt_recommended_total_control_state": "recommended_total_control_state",
 }
+PRIMARY_WINDOW_DISPATCH = {
+    "project_package_initialization": "01-编排-初始化项目包",
+    "product_source_completion": "10-执行-产品专家",
+}
+PRIMARY_WINDOW_AGENTS = tuple(PRIMARY_WINDOW_DISPATCH.values())
 
 
 class ScriptFailure(Exception):
@@ -213,16 +217,17 @@ def build_closed_handoff_spec(
 def fail_closed_route_result(*, reason: str) -> dict[str, Any]:
     return {
         "route_verdict": "route_blocked",
-        "window_state": "closed",
-        "window_state_reason": reason,
-        "human_contact_allowed": False,
-        "human_contact_owner": "00-编排-总控",
-        "human_contact_mode": "control_entry",
-        "human_contact_block_reason": reason,
-        "next_required_action": "/总控",
-        "child_dispatch_authority_verdict": "route_not_authorized",
         "dispatch_allowed": False,
-        "allowed_next_actions": ["/总控"],
+        "dispatch_target": None,
+        "next_required_action": "/总控",
+        "receipt_join_fields": list(REQUIRED_JOIN_FIELDS),
+        "receipt_replay_required_fields": [
+            "child_thread",
+            "current_phase",
+            "return_reason",
+            "recommended_return_target",
+        ],
+        "block_reason": reason,
     }
 
 
@@ -233,93 +238,55 @@ def validate_registry_taxonomy(
     dispatch_intent: str,
 ) -> None:
     agent = require_string(registry_entry.get("agent"), field_name=f"{dispatch_intent}.agent")
-    human_contact_contract = require_mapping(
-        registry_entry.get("human_contact_contract"),
-        field_name=f"{dispatch_intent}.human_contact_contract",
-    )
-    window_family = require_string(
-        human_contact_contract.get("window_family"),
-        field_name=f"{dispatch_intent}.human_contact_contract.window_family",
-    )
-    host_window_contract = registry_entry.get("host_window_contract")
-    if isinstance(host_window_contract, dict):
-        slot_type = require_string(
-            host_window_contract.get("slot_type"),
-            field_name=f"{dispatch_intent}.host_window_contract.slot_type",
-        )
-        if slot_type == "primary_window" and window_family != "primary_window":
-            raise ScriptFailure(
-                exit_code=2,
-                decision="dispatch_blocked",
-                errors=[
-                    "registry taxonomy conflict: "
-                    f"{dispatch_intent}.host_window_contract.slot_type={slot_type} "
-                    f"conflicts with {dispatch_intent}.human_contact_contract.window_family={window_family}"
-                ],
-                result=fail_closed_route_result(reason="registry_taxonomy_conflict"),
-            )
-        if slot_type != "primary_window" and window_family == "primary_window":
-            raise ScriptFailure(
-                exit_code=2,
-                decision="dispatch_blocked",
-                errors=[
-                    "registry taxonomy conflict: "
-                    f"{dispatch_intent}.host_window_contract.slot_type={slot_type} "
-                    f"conflicts with {dispatch_intent}.human_contact_contract.window_family={window_family}"
-                ],
-                result=fail_closed_route_result(reason="registry_taxonomy_conflict"),
-            )
-
     routing_contract = require_mapping(path_rules.get("routing_contract"), field_name="routing_contract")
-    human_window_family = require_mapping(routing_contract.get("human_window_family"), field_name="routing_contract.human_window_family")
-    primary_window_agents = human_window_family.get("primary_window")
-    control_entry_agents = human_window_family.get("control_entry")
-    if window_family == "primary_window":
-        if not isinstance(primary_window_agents, list) or agent not in primary_window_agents:
+    new_project_host_model = routing_contract.get("new_project_host_model")
+    historical_project_host_model = routing_contract.get("historical_project_host_model")
+    if new_project_host_model != ["00-编排-总控", *PRIMARY_WINDOW_AGENTS]:
+        raise ScriptFailure(
+            exit_code=2,
+            decision="dispatch_blocked",
+            errors=["routing_contract.new_project_host_model must stay fixed as 00 + 01 + 10"],
+            result=fail_closed_route_result(reason="registry_taxonomy_conflict"),
+        )
+    if historical_project_host_model != ["00-编排-总控", "10-执行-产品专家"]:
+        raise ScriptFailure(
+            exit_code=2,
+            decision="dispatch_blocked",
+            errors=["routing_contract.historical_project_host_model must stay fixed as 00 + 10"],
+            result=fail_closed_route_result(reason="registry_taxonomy_conflict"),
+        )
+    if dispatch_intent in PRIMARY_WINDOW_DISPATCH:
+        expected_agent = PRIMARY_WINDOW_DISPATCH[dispatch_intent]
+        if agent != expected_agent:
             raise ScriptFailure(
                 exit_code=2,
                 decision="dispatch_blocked",
-                errors=[f"registry/path taxonomy conflict: {agent} missing from routing_contract.human_window_family.primary_window"],
+                errors=[f"registry taxonomy conflict: {dispatch_intent} must map to {expected_agent}"],
                 result=fail_closed_route_result(reason="registry_taxonomy_conflict"),
             )
-    if window_family == "visible_worker":
-        if isinstance(primary_window_agents, list) and agent in primary_window_agents:
-            raise ScriptFailure(
-                exit_code=2,
-                decision="dispatch_blocked",
-                errors=[f"registry/path taxonomy conflict: {agent} cannot be both visible_worker and primary_window"],
-                result=fail_closed_route_result(reason="registry_taxonomy_conflict"),
-            )
-        if isinstance(control_entry_agents, list) and agent in control_entry_agents:
-            raise ScriptFailure(
-                exit_code=2,
-                decision="dispatch_blocked",
-                errors=[f"registry/path taxonomy conflict: {agent} cannot be both visible_worker and control_entry"],
-                result=fail_closed_route_result(reason="registry_taxonomy_conflict"),
-            )
+        return
+    if agent in PRIMARY_WINDOW_AGENTS:
+        raise ScriptFailure(
+            exit_code=2,
+            decision="dispatch_blocked",
+            errors=[f"registry taxonomy conflict: non-primary dispatch_intent cannot reuse primary-window agent {agent}"],
+            result=fail_closed_route_result(reason="registry_taxonomy_conflict"),
+        )
 
 
-def resolve_window_state(
+def resolve_dispatch_authority(
     *,
     dispatch_intent: str,
     registry_entry: dict[str, Any],
     authority_snapshot: dict[str, Any],
     dispatch_request: dict[str, Any],
     latest_status: dict[str, Any],
-    path_rules: dict[str, Any],
-) -> tuple[str, str, bool, str]:
-    human_contact_contract = require_mapping(
-        registry_entry.get("human_contact_contract"),
-        field_name=f"{dispatch_intent}.human_contact_contract",
-    )
-    window_family = require_string(
-        human_contact_contract.get("window_family"),
-        field_name=f"{dispatch_intent}.human_contact_contract.window_family",
-    )
-    if window_family == "visible_worker":
-        return "closed", "visible_worker_static_block", True, "dispatch_authorized"
+) -> tuple[bool, str]:
+    agent = require_string(registry_entry.get("agent"), field_name=f"{dispatch_intent}.agent")
+    if agent not in PRIMARY_WINDOW_AGENTS:
+        return True, "dispatch_authorized"
     if dispatch_intent == "project_package_initialization":
-        return "active", "active_primary_window", True, "dispatch_authorized"
+        return True, "dispatch_authorized"
     if dispatch_intent != "product_source_completion":
         raise ScriptFailure(
             exit_code=2,
@@ -328,58 +295,20 @@ def resolve_window_state(
             result=fail_closed_route_result(reason="unsupported_primary_window_dispatch_intent"),
         )
 
-    entry_authority_grant_contract = require_mapping(
-        registry_entry.get("entry_authority_grant_contract"),
-        field_name=f"{dispatch_intent}.entry_authority_grant_contract",
-    )
-    positive_grants = entry_authority_grant_contract.get("positive_grants")
-    if not isinstance(positive_grants, list):
-        raise ScriptFailure(
-            exit_code=3,
-            decision="schema_error",
-            errors=[f"{dispatch_intent}.entry_authority_grant_contract.positive_grants must be a list"],
-        )
-    indexed_grants = {
-        str(grant.get("grant_id")): grant
-        for grant in positive_grants
-        if isinstance(grant, dict) and str(grant.get("grant_id", "")).strip()
-    }
-    new_project_grant = require_mapping(
-        indexed_grants.get("new_project_receipt_unlock"),
-        field_name=f"{dispatch_intent}.entry_authority_grant_contract.positive_grants.new_project_receipt_unlock",
-    )
-    historical_grant = require_mapping(
-        indexed_grants.get("historical_project_classifier_grant"),
-        field_name=f"{dispatch_intent}.entry_authority_grant_contract.positive_grants.historical_project_classifier_grant",
-    )
     child_thread = latest_status.get("child_thread")
     receipt_consumed = latest_status.get("receipt_consumed") is True
     same_join_chain = is_same_join_chain(authority_snapshot, latest_status)
     return_reason = latest_status.get("return_reason")
-    next_state = latest_status.get("recommended_total_control_state")
+    recommended_return_target = latest_status.get("recommended_return_target")
     if (
         receipt_consumed
         and same_join_chain
         and child_thread == "01-编排-初始化项目包"
         and return_reason == "completed"
-        and next_state == "project_baseline_ready_10_unlocked"
+        and recommended_return_target == "10-执行-产品专家"
     ):
-        return "active", "active_primary_window", True, "new_project_receipt_unlock"
-    if str(authority_snapshot.get("project_profile") or "").strip() == "historical_project":
-        if str(authority_snapshot.get("historical_project_classifier_verdict") or "").strip() == "allow_10":
-            return "active", "active_primary_window", True, "historical_project_classifier_grant"
-        return (
-            "standby",
-            "locked_standby_until_historical_project_entry_grant_materialized",
-            False,
-            "blocked_by_entry_authority_grant",
-        )
-    return (
-        "standby",
-        "locked_standby_until_01_receipt_consumed",
-        False,
-        "blocked_by_unlock_contract",
-    )
+        return True, "receipt_rejudge_ready"
+    return False, "receipt_rejudge_required"
 
 
 def main(argv: list[str]) -> int:
@@ -405,51 +334,27 @@ def main(argv: list[str]) -> int:
             path_rules=path_rules,
             dispatch_intent=dispatch_intent,
         )
-        window_state, window_state_reason, dispatch_allowed, authority_verdict = resolve_window_state(
+        dispatch_allowed, authority_verdict = resolve_dispatch_authority(
             dispatch_intent=dispatch_intent,
             registry_entry=registry_entry,
             authority_snapshot=authority_snapshot,
             dispatch_request=dispatch_request,
             latest_status=latest_status,
-            path_rules=path_rules,
         )
-        human_contact_contract = require_mapping(
-            registry_entry.get("human_contact_contract"),
-            field_name=f"{dispatch_intent}.human_contact_contract",
-        )
-        window_family = require_string(
-            human_contact_contract.get("window_family"),
-            field_name=f"{dispatch_intent}.human_contact_contract.window_family",
-        )
-        if dispatch_allowed and window_family == "visible_worker":
-            human_contact_owner = str(human_contact_contract.get("fallback_owner", "00-编排-总控"))
-            human_contact_mode = "visible_worker_blocked"
-            human_contact_block_reason = "current_not_human_window"
-            next_required_action = f"dispatch:{registry_entry['agent']}"
-        else:
-            human_contact_owner = registry_entry["agent"] if dispatch_allowed else "00-编排-总控"
-            human_contact_mode = "direct_primary_window" if dispatch_allowed else "control_entry"
-            if dispatch_allowed:
-                human_contact_block_reason = "none"
-            elif authority_verdict == "blocked_by_unlock_contract":
-                human_contact_block_reason = "locked_until_01_receipt_consumed"
-            elif authority_verdict == "blocked_by_entry_authority_grant":
-                human_contact_block_reason = "locked_until_historical_project_entry_grant_materialized"
-            else:
-                human_contact_block_reason = "unsupported_route"
-            next_required_action = f"dispatch:{registry_entry['agent']}" if dispatch_allowed else "/读取回执"
+        agent = require_string(registry_entry.get("agent"), field_name=f"{dispatch_intent}.agent")
         result: dict[str, Any] = {
             "route_verdict": "dispatch_allowed" if dispatch_allowed else "dispatch_blocked",
-            "window_state": window_state,
-            "window_state_reason": window_state_reason,
-            "human_contact_allowed": dispatch_allowed and window_family == "primary_window",
-            "human_contact_owner": human_contact_owner,
-            "human_contact_mode": human_contact_mode,
-            "human_contact_block_reason": human_contact_block_reason,
-            "next_required_action": next_required_action,
-            "child_dispatch_authority_verdict": authority_verdict,
             "dispatch_allowed": dispatch_allowed,
-            "allowed_next_actions": [f"dispatch:{registry_entry['agent']}"] if dispatch_allowed else ["/读取回执"],
+            "dispatch_target": agent if dispatch_allowed else None,
+            "next_required_action": f"dispatch:{agent}" if dispatch_allowed else "/读取回执",
+            "receipt_join_fields": list(REQUIRED_JOIN_FIELDS),
+            "receipt_replay_required_fields": [
+                "child_thread",
+                "current_phase",
+                "return_reason",
+                "recommended_return_target",
+            ],
+            "dispatch_authority": authority_verdict,
         }
         decision = "dispatch_allowed" if dispatch_allowed else "dispatch_blocked"
         if dispatch_allowed:

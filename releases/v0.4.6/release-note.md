@@ -4,7 +4,7 @@
 
 `v0.4.6` 是 `v0.4.5` 之后的稳定线候选，目标是把现场暴露出的控制链和原型交付边界问题收回到 published truth、runtime gate 和测试里。
 
-这份 release note 是发版说明主编辑源。远端资产上传、公开 stable pointer 同步、install / doctor / runtime 验证完成前，它只能作为发版准备说明，不能单独证明正式发布完成。
+开发仓中的这份 release note 是发版说明主编辑源；发布仓 `releases/v0.4.6/release-note.md` 只是导出副本。远端资产上传、公开 stable pointer 同步、install / doctor / runtime 验证完成前，它只能作为发版准备说明，不能单独证明正式发布完成。
 
 ## 1. 这个版本做了什么 / 本次变化
 

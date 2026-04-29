@@ -130,7 +130,8 @@ def collect_candidate_paths(project_root: Path, explicit_paths: list[str]) -> li
     tracked = run_git_paths(project_root, "ls-files")
     staged = run_git_paths(project_root, "diff", "--cached", "--name-only")
     explicit = [normalize_path(raw_path, project_root) for raw_path in explicit_paths]
-    return sorted({path for path in [*tracked, *staged, *explicit] if path})
+    mandatory = [READING_LAYER_PATH] if (project_root / READING_LAYER_PATH).exists() else []
+    return sorted({path for path in [*tracked, *staged, *explicit, *mandatory] if path})
 
 
 def load_status_payload(project_root: Path) -> dict[str, object]:
@@ -170,6 +171,35 @@ def is_truth_source_path(path: str) -> bool:
 
 def markdown_links(text: str) -> list[tuple[str, str]]:
     return [(match.group(1).strip(), match.group(2).strip()) for match in re.finditer(r"\[([^\]]+)\]\(([^)]+)\)", text)]
+
+
+def extract_mermaid_blocks(text: str) -> list[str]:
+    return [match.group(1).strip() for match in re.finditer(r"```mermaid\s*\n([\s\S]*?)\n```", text)]
+
+
+def reading_layer_flowchart_issues(text: str) -> list[str]:
+    blocks = extract_mermaid_blocks(text)
+    if not blocks:
+        return ["reading-layer actual flowchart missing"]
+    issues: list[str] = []
+    placeholder_terms = ("待补", "待按", "回链见模块真源", "A -> B -> C")
+    for block in blocks:
+        compact = re.sub(r"\s+", " ", block)
+        if not block or any(term in compact for term in placeholder_terms):
+            issues.append("reading-layer actual flowchart missing")
+        elif "-->" not in block or not re.search(r"\[[^\]]+\]", block) or not re.search(r"(?m)^\s*flowchart\s+(TD|LR|RL|BT)\b", block):
+            issues.append("reading-layer actual flowchart missing")
+        elif not any(term in block for term in ("模块", "页面", "主流程")):
+            issues.append("reading-layer actual flowchart missing")
+    return issues
+
+
+def has_reading_layer_truth_claim(text: str) -> bool:
+    protected = ("不得写成", "不能写成", "禁止写成", "不能反向", "不得反向")
+    for line in text.splitlines():
+        if ("唯一正式合并 PRD" in line or "反向作为模块真源" in line) and not any(term in line for term in protected):
+            return True
+    return False
 
 
 def markdown_link_targets(text: str) -> list[str]:
@@ -637,8 +667,9 @@ def content_issues(project_root: Path, candidate_paths: list[str]) -> list[str]:
 
         if relative_path == READING_LAYER_PATH:
             heading = heading_line(text)
-            if "阅读层" not in heading or "PRD阅读层" not in text or "唯一正式合并 PRD" in text:
+            if "阅读层" not in heading or "PRD阅读层" not in text or has_reading_layer_truth_claim(text):
                 issues.append(f"reading-layer naming boundary violated: {relative_path}")
+            issues.extend(reading_layer_flowchart_issues(text))
             quick_index = extract_section(text, "人读流程图速查")
             if "人读流程图速查" not in text:
                 issues.append(f"diagram quick index missing: {relative_path}")

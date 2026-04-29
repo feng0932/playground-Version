@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "bundle_id": "default-methodology-bundle",
-  "bundle_version": "v0.4.5",
+  "bundle_version": "v0.4.6",
   "bundle_source": "local-default-bundle",
   "channel": "stable",
   "startup_prompt": "startup/00-编排-总控.startup.txt",

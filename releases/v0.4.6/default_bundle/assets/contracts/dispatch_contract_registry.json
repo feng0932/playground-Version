@@ -5,11 +5,6 @@
       "dispatch_intent": "install_runtime_check",
       "agent": "02-编排-安装与运行检查",
       "role_prompt_source": "install/default_bundle/agents/02-编排-安装与运行检查.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -47,22 +42,9 @@
       "dispatch_intent": "project_package_initialization",
       "agent": "01-编排-初始化项目包",
       "role_prompt_source": "install/default_bundle/agents/01-编排-初始化项目包.agent.md",
-      "human_contact_contract": {
-        "window_family": "primary_window",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
-      "host_window_contract": {
-        "slot_type": "primary_window",
-        "project_applicability": "new_project_only",
-        "visible_route_owner": "00-编排-总控",
-        "default_window_state": "released",
-        "window_close_policy": "close_after_receipt_consumed"
-      },
       "stage_snapshot_contract": {
         "child_thread": "01-编排-初始化项目包",
         "current_phase": "project_intake",
-        "phase_status": "released",
         "return_reason": [
           "completed",
           "blocked",
@@ -86,22 +68,9 @@
         ],
         "current_blockers": [],
         "recommended_return_target": "10-执行-产品专家",
-        "recommended_total_control_state": "project_baseline_ready_10_unlocked",
         "allowed_next_actions": [
-          "/读取回执",
-          "dispatch:10-执行-产品专家"
+          "/读取回执"
         ]
-      },
-      "unlock_contract": {
-        "unlock_owner": "00-编排-总控",
-        "completed_unlocks": [
-          "10-执行-产品专家"
-        ],
-        "unlock_precondition": "completed_receipt_consumed_by_control"
-      },
-      "primary_window_conversation_contract": {
-        "active_primary_window_default": "direct_human_conversation",
-        "allow_direct_user_question_semantics": "worker_exception_only_not_primary_window_gate"
       },
       "control_action_contract": {
         "/总控": "00_main_thread_entry_or_status_only",
@@ -160,7 +129,6 @@
       "receipt_consumption_chain_contract": {
         "receipt_latch_owner": "00-编排-总控",
         "rejudge_owner": "00-编排-总控",
-        "unlock_owner": "00-编排-总控",
         "same_stage_remediation_owner": "00-编排-总控",
         "new_turn_trigger": "/读取回执"
       },
@@ -322,22 +290,9 @@
       "dispatch_intent": "product_source_completion",
       "agent": "10-执行-产品专家",
       "role_prompt_source": "install/default_bundle/agents/10-执行-产品专家.agent.md",
-      "human_contact_contract": {
-        "window_family": "primary_window",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
-      "host_window_contract": {
-        "slot_type": "primary_window",
-        "project_applicability": "shared",
-        "visible_route_owner": "00-编排-总控",
-        "default_window_state": "locked_standby_for_new_project",
-        "window_close_policy": "close_after_receipt_consumed"
-      },
       "stage_snapshot_contract": {
         "child_thread": "10-执行-产品专家",
         "current_phase": "product_source_completion",
-        "phase_status": "locked_standby_for_new_project",
         "return_reason": [
           "completed",
           "blocked",
@@ -355,11 +310,17 @@
         ],
         "current_blockers": [],
         "recommended_return_target": "10-执行-产品专家",
-        "recommended_total_control_state": "product_source_completion_active_primary_window",
         "allowed_next_actions": [
-          "/读取回执",
-          "dispatch:10-执行-产品专家"
+          "/读取回执"
         ],
+        "requirements_discovery_required_groups": [
+          "core_problem_and_success_criteria",
+          "do_and_do_not_scope",
+          "main_branch_exception_recovery_paths",
+          "pages_states_fields_acceptance"
+        ],
+        "requirements_discovery_confirmed_groups": [],
+        "requirements_discovery_gate_status": "pending_until_all_four_groups_confirmed",
         "required_pages_or_page_classes": [],
         "deferred_pages_or_page_classes": [],
         "required_states_or_branches": [],
@@ -372,40 +333,20 @@
         "prototype_foundation_inheritance_decision": [],
         "shared_asset_inheritance_decision": [],
         "module_exceptions": [],
-        "upgrade_required": false
-      },
-      "unlock_contract": {
-        "unlock_owner": "00-编排-总控",
-        "completed_unlocks": [
-          "10-执行-产品专家"
+        "upgrade_required": false,
+        "low_fidelity_preview_artifact": [],
+        "low_fidelity_preview_allowed_formats": [
+          "page_block_diagram",
+          "wireframe_block_diagram",
+          "ascii_page_sketch"
         ],
-        "unlock_precondition": "completed_receipt_consumed_by_control"
-      },
-      "entry_authority_grant_contract": {
-        "grant_owner": "00-编排-总控",
-        "grant_scope": "fresh_product_source_completion_opening_only",
-        "positive_grants": [
-          {
-            "grant_id": "new_project_receipt_unlock",
-            "grant_type": "unlock_contract_reference",
-            "unlock_contract_ref": "unlock_contract",
-            "blocked_reason": "locked_until_01_receipt_consumed"
-          },
-          {
-            "grant_id": "historical_project_classifier_grant",
-            "grant_type": "authority_carrier_classifier",
-            "required_authority_fields": [
-              "project_profile",
-              "historical_project_classifier_verdict"
-            ],
-            "blocked_reason": "locked_until_historical_project_entry_grant_materialized"
-          }
-        ],
-        "missing_grant_policy": "block_before_product_source_completion_fresh_opening"
-      },
-      "primary_window_conversation_contract": {
-        "active_primary_window_default": "direct_human_conversation",
-        "allow_direct_user_question_semantics": "worker_exception_only_not_primary_window_gate"
+        "low_fidelity_preview_format": "",
+        "low_fidelity_human_confirmation": false,
+        "low_fidelity_minimal_formal_receipt": [],
+        "prototype_design_entry_allowed": false,
+        "prototype_presentation_boundary_forbidden_items": [],
+        "prototype_presentation_boundary_default_items": [],
+        "prototype_presentation_boundary_exceptions": []
       },
       "control_action_contract": {
         "/总控": "00_main_thread_entry_or_status_only",
@@ -464,7 +405,6 @@
       "receipt_consumption_chain_contract": {
         "receipt_latch_owner": "00-编排-总控",
         "rejudge_owner": "00-编排-总控",
-        "unlock_owner": "00-编排-总控",
         "same_stage_remediation_owner": "00-编排-总控",
         "new_turn_trigger": "/读取回执"
       },
@@ -711,11 +651,6 @@
       "dispatch_intent": "prototype_admin_canvas_delivery",
       "agent": "11-执行-管理后台原型专家",
       "role_prompt_source": "install/default_bundle/agents/11-执行-管理后台原型专家.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -825,11 +760,6 @@
       "dispatch_intent": "prototype_mobile_canvas_delivery",
       "agent": "13-执行-手机端原型专家",
       "role_prompt_source": "install/default_bundle/agents/13-执行-手机端原型专家.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -939,11 +869,6 @@
       "dispatch_intent": "prototype_pc_canvas_delivery",
       "agent": "14-执行-PC端原型专家",
       "role_prompt_source": "install/default_bundle/agents/14-执行-PC端原型专家.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -1053,11 +978,6 @@
       "dispatch_intent": "gate_review",
       "agent": "20-审查-门禁审查",
       "role_prompt_source": "install/default_bundle/agents/20-审查-门禁审查.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -1095,11 +1015,6 @@
       "dispatch_intent": "product_review",
       "agent": "21-审查-产品审查",
       "role_prompt_source": "install/default_bundle/agents/21-审查-产品审查.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -1298,11 +1213,6 @@
       "dispatch_intent": "prototype_review",
       "agent": "22-审查-原型审查",
       "role_prompt_source": "install/default_bundle/agents/22-审查-原型审查.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -1427,11 +1337,6 @@
       "dispatch_intent": "reverse_review",
       "agent": "23-审查-反向审查",
       "role_prompt_source": "install/default_bundle/agents/23-审查-反向审查.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -1527,11 +1432,6 @@
       "dispatch_intent": "cross_role_prereview",
       "agent": "24-审查-跨角色预审",
       "role_prompt_source": "install/default_bundle/agents/24-审查-跨角色预审.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,
@@ -1589,11 +1489,6 @@
       "dispatch_intent": "test_review",
       "agent": "25-审查-测试专家",
       "role_prompt_source": "install/default_bundle/agents/25-审查-测试专家.agent.md",
-      "human_contact_contract": {
-        "window_family": "visible_worker",
-        "fallback_owner": "00-编排-总控",
-        "worker_block_policy": "fixed_not_human_window_block"
-      },
       "worker_lifecycle_contract": {
         "slot_tier": "ephemeral_worker",
         "close_after_receipt_consumed": true,

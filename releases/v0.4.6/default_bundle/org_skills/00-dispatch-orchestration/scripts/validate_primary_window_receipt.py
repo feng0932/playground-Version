@@ -19,7 +19,6 @@ REQUIRED_REPLAY_FIELDS = (
     "current_phase",
     "return_reason",
     "recommended_return_target",
-    "recommended_total_control_state",
 )
 REQUIRED_RECEIPT_SECTIONS = ("工单回执", "dispatch_evidence")
 PRIMARY_WINDOW_CHILD_THREADS = {

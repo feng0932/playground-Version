@@ -64,6 +64,18 @@ EXPECTED_DISPATCH_INTENTS = (
     "test_review",
 )
 
+PRIMARY_WINDOW_DISPATCH = {
+    "project_package_initialization": "01-编排-初始化项目包",
+    "product_source_completion": "10-执行-产品专家",
+}
+RETIRED_STAGE_SNAPSHOT_KEYS = {
+    "phase_" "status",
+    "recommended_total_control_" "state",
+    "window_" "state",
+    "window_" "state_reason",
+    "human_contact_" "mode",
+}
+
 
 DELIVERY_READINESS_SCOPE_SLICE_DISPATCH_INTENTS = {
     "product_review",
@@ -335,30 +347,14 @@ def validate_registry_owned_contract_fields(
 
 def validate_registry_taxonomy(registry_entry: dict[str, Any]) -> None:
     dispatch_intent = str(registry_entry.get("dispatch_intent", "")).strip() or "unknown_dispatch_intent"
-    human_contact_contract = registry_entry.get("human_contact_contract")
-    if not isinstance(human_contact_contract, dict):
-        fail(f"registry entry {dispatch_intent} human_contact_contract must decode to mapping")
-    window_family = str(human_contact_contract.get("window_family", "")).strip()
-    if not window_family:
-        fail(f"registry entry {dispatch_intent} human_contact_contract.window_family must be a non-empty string")
-    host_window_contract = registry_entry.get("host_window_contract")
-    if not isinstance(host_window_contract, dict):
+    agent = str(registry_entry.get("agent", "")).strip()
+    if dispatch_intent in PRIMARY_WINDOW_DISPATCH:
+        expected_agent = PRIMARY_WINDOW_DISPATCH[dispatch_intent]
+        if agent != expected_agent:
+            fail(f"registry taxonomy conflict: {dispatch_intent} must map to {expected_agent}")
         return
-    slot_type = str(host_window_contract.get("slot_type", "")).strip()
-    if not slot_type:
-        fail(f"registry entry {dispatch_intent} host_window_contract.slot_type must be a non-empty string")
-    if slot_type == "primary_window" and window_family != "primary_window":
-        fail(
-            "registry taxonomy conflict: "
-            f"{dispatch_intent}.host_window_contract.slot_type={slot_type} "
-            f"conflicts with {dispatch_intent}.human_contact_contract.window_family={window_family}"
-        )
-    if slot_type != "primary_window" and window_family == "primary_window":
-        fail(
-            "registry taxonomy conflict: "
-            f"{dispatch_intent}.host_window_contract.slot_type={slot_type} "
-            f"conflicts with {dispatch_intent}.human_contact_contract.window_family={window_family}"
-        )
+    if agent in PRIMARY_WINDOW_DISPATCH.values():
+        fail(f"registry taxonomy conflict: non-primary dispatch_intent cannot reuse primary-window agent {agent}")
 
 
 def canonical_role_prompt_body(role_prompt_path: Path) -> tuple[dict[str, Any], str, bytes, str]:
@@ -367,6 +363,17 @@ def canonical_role_prompt_body(role_prompt_path: Path) -> tuple[dict[str, Any], 
     body_bytes = body.encode("utf-8")
     body_sha = hashlib.sha256(body_bytes).hexdigest()
     return frontmatter, body, body_bytes, body_sha
+
+
+def sanitized_stage_snapshot_contract(registry_entry: dict[str, Any]) -> dict[str, Any] | None:
+    stage_snapshot_contract = registry_entry.get("stage_snapshot_contract")
+    if not isinstance(stage_snapshot_contract, dict):
+        return None
+    return {
+        key: value
+        for key, value in stage_snapshot_contract.items()
+        if key not in RETIRED_STAGE_SNAPSHOT_KEYS
+    }
 
 
 def build_dispatch_contract_block(
@@ -391,18 +398,12 @@ def build_dispatch_contract_block(
         "receipt_contract": registry_entry["receipt_contract"],
         "blocker_scope": registry_entry["blocker_scope"],
     }
+    sanitized_stage_snapshot = sanitized_stage_snapshot_contract(registry_entry)
     for contract_key in (
-        "host_window_contract",
         "worker_lifecycle_contract",
-        "stage_snapshot_contract",
-        "unlock_contract",
-        "entry_authority_grant_contract",
-        "primary_window_conversation_contract",
-        "human_contact_contract",
         "control_action_contract",
         "human_visible_reply_surface_contract",
         "machine_receipt_surface_contract",
-        "receipt_consumption_chain_contract",
         "layered_project_truth_contract",
         "shared_object_rule_capability_contract",
         "prototype_foundation_contract",
@@ -412,6 +413,8 @@ def build_dispatch_contract_block(
     ):
         if contract_key in registry_entry:
             contract_block[contract_key] = registry_entry[contract_key]
+    if sanitized_stage_snapshot:
+        contract_block["stage_snapshot_contract"] = sanitized_stage_snapshot
     dispatch_intent = str(handoff_spec.get("dispatch_intent", "")).strip()
     input_package = handoff_spec.get("input_package")
     review_scope = ""
@@ -440,8 +443,8 @@ def build_dispatch_contract_block(
 
 
 def is_primary_window_registry_entry(registry_entry: dict[str, Any]) -> bool:
-    host_window_contract = registry_entry.get("host_window_contract")
-    return isinstance(host_window_contract, dict) and str(host_window_contract.get("slot_type", "")).strip() == "primary_window"
+    dispatch_intent = str(registry_entry.get("dispatch_intent", "")).strip()
+    return dispatch_intent in PRIMARY_WINDOW_DISPATCH
 
 
 def build_machine_receipt_carrier(handoff_spec: dict[str, Any], registry_entry: dict[str, Any]) -> str:
@@ -488,7 +491,7 @@ def build_machine_receipt_carrier(handoff_spec: dict[str, Any], registry_entry: 
         receipt_lines.append(f"- {normalized}：")
         seen_receipt_fields.add(normalized)
 
-    stage_snapshot_contract = registry_entry.get("stage_snapshot_contract")
+    stage_snapshot_contract = sanitized_stage_snapshot_contract(registry_entry)
     if isinstance(stage_snapshot_contract, dict):
         for field_name in stage_snapshot_contract:
             append_machine_only_field(field_name)

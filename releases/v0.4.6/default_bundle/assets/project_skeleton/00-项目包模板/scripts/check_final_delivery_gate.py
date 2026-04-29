@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # AI_TEAM_MANAGED_SOURCE: scripts/check_final_delivery_gate.py
-# AI_TEAM_MANAGED_SHA256: 9f31ef216a5490d82d0497ef9110d2147ae156661c65c670fa13803cde17ed9f
+# AI_TEAM_MANAGED_SHA256: 2bbcadaa2786d13851800806ecd64f75a1021b7c841ede566214b80cd4a77bf2
 from __future__ import annotations
 
 import argparse
@@ -11,7 +11,6 @@ import subprocess
 import sys
 from datetime import date
 from pathlib import Path
-
 
 STATUS_PATH = Path("80-完整提交包/00-提交状态.json")
 RECEIPT_PATH = Path("80-完整提交包/03-合并评审记录/30-结果-AI深审记录.md")
@@ -53,10 +52,8 @@ FINAL_GATE_SEMANTIC_BOUNDARY = {
     "writes_status_truth": False,
     "reruns_sync_submission_status": False,
 }
-
 BATCH_SEQUENCE_PATTERN = re.compile(r"batch-(\d+)\Z")
 REVIEW_DATE_PATTERN = re.compile(r"review-(\d{4}-\d{2}-\d{2})\Z")
-
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validate whether final-review evidence can still be reused.")
@@ -65,7 +62,6 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         help="Project root containing 80-完整提交包/00-提交状态.json. Defaults to current working directory.",
     )
     return parser.parse_args(argv)
-
 
 def repo_root_from_args(project_root: str | None) -> Path:
     return Path(project_root).expanduser().resolve() if project_root else Path.cwd().resolve()
@@ -275,7 +271,6 @@ def validate_receipt_machine_checks(receipt: dict) -> None:
         if value not in {"pass", "not_required"}:
             raise ValueError(f"receipt.machine_checks.{key} has unsupported value")
 
-
 def validate_review_refs(receipt: dict) -> None:
     review_refs = receipt.get("review_refs")
     if not isinstance(review_refs, list):
@@ -289,11 +284,39 @@ def validate_review_refs(receipt: dict) -> None:
     if not closeout_sources:
         raise ValueError("receipt.review_refs must include at least one closeout source reference")
 
+def validate_lifecycle_artifact_ref(project_root: Path, value: object, *, field_name: str) -> None:
+    raw_value = str(value or "").strip()
+    path_part = raw_value.split("#", 1)[0].split("?", 1)[0].strip()
+    if not path_part:
+        raise ValueError(f"{field_name} path must be non-empty")
+    candidate = Path(path_part)
+    if candidate.is_absolute() or ".." in candidate.parts:
+        raise ValueError(f"{field_name} path must be a project-relative path")
+    if not (project_root / candidate).exists():
+        raise ValueError(f"{field_name} path does not exist")
+
+
+def validate_prototype_lifecycle_evidence(receipt: dict, *, project_root: Path) -> None:
+    lifecycle = receipt.get("prototype_lifecycle_evidence")
+    if not isinstance(lifecycle, dict): raise ValueError("receipt.prototype_lifecycle_evidence must be an object")
+    missing = [field for field in ("first_generated_artifact_verdict", "first_generated_artifact_evidence", "first_freeze_artifact_verdict", "first_freeze_artifact_evidence", "remediation_verdict", "remediation_evidence") if field not in lifecycle]
+    if missing: raise ValueError("prototype_lifecycle_evidence missing required keys: " + ", ".join(missing))
+    for field, values in {"first_generated_artifact_verdict": {"failed", "passed", "not_checked"}, "first_freeze_artifact_verdict": {"passed", "blocked", "not_reached"}, "remediation_verdict": {"none", "passed", "failed"}}.items():
+        if str(lifecycle.get(field, "")).strip() not in values: raise ValueError(f"{field} has unsupported value")
+    empty = [field for field in ("first_generated_artifact_evidence", "first_freeze_artifact_evidence") if not str(lifecycle.get(field, "")).strip()]
+    if empty: raise ValueError(f"{empty[0]} must be non-empty")
+    if str(lifecycle.get("remediation_verdict", "")).strip() != "none" and not str(lifecycle.get("remediation_evidence", "")).strip(): raise ValueError("remediation_evidence must be non-empty")
+    for field in ("first_generated_artifact_evidence", "first_freeze_artifact_evidence"):
+        validate_lifecycle_artifact_ref(project_root, lifecycle.get(field), field_name=field)
+    if str(lifecycle.get("remediation_verdict", "")).strip() != "none":
+        validate_lifecycle_artifact_ref(project_root, lifecycle.get("remediation_evidence"), field_name="remediation_evidence")
+    if str(lifecycle.get("first_generated_artifact_verdict", "")).strip() == "not_checked": raise ValueError("first_generated_artifact_not_checked_before_final_green")
+    if str(lifecycle.get("first_generated_artifact_verdict", "")).strip() == "failed" and str(lifecycle.get("remediation_verdict", "")).strip() != "passed": raise ValueError("first_generated_failure_hidden_by_final_green")
+    if str(lifecycle.get("first_freeze_artifact_verdict", "")).strip() != "passed": raise ValueError("first_freeze_artifact_verdict must be passed")
 
 def validate_semantic_boundary(receipt: dict) -> None:
     if receipt.get("semantic_boundary") != final_gate_semantic_boundary():
         raise ValueError("receipt semantic_boundary mismatch")
-
 
 def parse_review_batch(value: object, *, field_name: str) -> tuple[str, int | date]:
     normalized = str(value).strip()
@@ -326,6 +349,7 @@ def validate_receipt(
     current_status: dict,
     expected_inputs: list[dict[str, str]],
     compare_sha256: bool,
+    project_root: Path,
 ) -> None:
     required_keys = {
         "schema",
@@ -341,6 +365,7 @@ def validate_receipt(
         "machine_checks",
         "status_truth_snapshot",
         "review_refs",
+        "prototype_lifecycle_evidence",
     }
     missing = sorted(key for key in required_keys if key not in receipt)
     if missing:
@@ -358,6 +383,7 @@ def validate_receipt(
     validate_fingerprint_inputs(receipt.get("fingerprint_inputs"), expected_inputs, compare_sha256=compare_sha256)
     validate_receipt_machine_checks(receipt)
     validate_review_refs(receipt)
+    validate_prototype_lifecycle_evidence(receipt, project_root=project_root)
 
 
 def script_path(script_name: str) -> Path:
@@ -463,6 +489,7 @@ def evaluate_final_delivery_gate(project_root: Path) -> dict[str, object]:
             current_status=status,
             expected_inputs=expected_inputs,
             compare_sha256=compare_sha256,
+            project_root=project_root,
         )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         blockers.append(str(exc))

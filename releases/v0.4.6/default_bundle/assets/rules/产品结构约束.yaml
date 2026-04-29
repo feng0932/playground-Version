@@ -14,6 +14,10 @@ artifact_registry:
     artifact_id: module_flow_human_confirmation_doc
     owner_role: PM
     required_relative_path: 01-模块执行包/<模块名>/01-PRD/02-模块流程图与人类确认.md
+    required_section_headings:
+      - 聊天内低保真预演
+      - 人确认
+      - 低保真最小正式回执
     allowed_path_pattern:
       - 01-模块执行包/**/01-PRD/02-模块流程图与人类确认.md
     allowed_file_type:
@@ -173,6 +177,22 @@ conditional_requirements:
     trigger_scope: prototype_entry
     required_artifact: module_flow_human_confirmation_doc
     rule: prototype entry must fail closed until module-flow supporting doc is present
+  low_fidelity_preview_required_before_prototype_design:
+    trigger_scope: prototype_entry
+    required_artifact: module_flow_human_confirmation_doc
+    required_sections:
+      - 聊天内低保真预演
+      - 人确认
+      - 低保真最小正式回执
+    allowed_preview_formats:
+      - page_block_diagram
+      - wireframe_block_diagram
+      - ascii_page_sketch
+    forbidden_as_only_preview:
+      - 页面清单
+      - 状态清单
+      - 文字提纲
+    rule: prototype design must fail closed until chat low-fidelity page-like preview, human confirmation and minimal formal receipt are present
   high_risk_trigger_registry_present:
     trigger_scope: prototype_entry
     required_sections:
@@ -229,6 +249,13 @@ conditional_requirements:
     required_artifact: merged_prd_reading_layer
     activation_contract: 已启用完整提交阅读层
 
+package_b_blocker_code_anchors:
+  - prototype_deliverable_explanation_dominated
+  - prototype_visible_internal_copy_leak
+  - prototype_declared_navigation_unrealized
+  - prototype_index_page_set_stale
+  - first_generated_artifact_not_checked_before_final_green
+
 review_scope_requirements:
   prototype_entry:
     required_input_anchors:
@@ -238,11 +265,15 @@ review_scope_requirements:
       - 4_4_structured_contract_fields
       - module_flow_human_confirmation_doc
       - product_review_receipt
+      - requirements_discovery_four_group_receipt
+      - low_fidelity_minimal_formal_receipt
     required_checks:
       - document_required_fields_complete
       - prototype_chain_product_review_receipt_present_when_applicable
       - page_contracts_and_interaction_prototype_must_map_one_to_one_by_page_id
       - module_flow_human_confirmation_required_before_prototype
+      - requirements_discovery_four_groups_required_before_prototype
+      - low_fidelity_preview_required_before_prototype_design
   module_entity:
     required_input_anchors:
       - prd_body

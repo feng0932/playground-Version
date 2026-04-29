@@ -30,16 +30,8 @@ execution_scheme:
 
 routing_contract:
   control_chain_entry_owner: 00-编排-总控
-  visible_route_owner: 00-编排-总控
   receipt_consumer_owner: 00-编排-总控
   rejudge_owner: 00-编排-总控
-  human_window_family:
-    control_entry:
-      - 00-编排-总控
-    primary_window:
-      - 01-编排-初始化项目包
-      - 10-执行-产品专家
-    visible_worker: all_other_agents
   new_project_host_model:
     - 00-编排-总控
     - 01-编排-初始化项目包
@@ -94,32 +86,14 @@ routing_contract:
   worker_user_block_literal: 当前不是对人窗口。
   return_target_semantics: business_consumer_contract
   same_stage_return_targets_semantics: same_stage_remediation_only
-  unlock_contract_semantics: release_next_visible_action_after_control_consumes_terminal_receipt
-  entry_authority_grant_semantics: allow_fresh_primary_window_opening_after_control_validates_canonical_entry_grant
   worker_lifecycle_semantics: ephemeral_worker_close_after_receipt_consumed
-  primary_window_continuation_failure_surface:
-    current_not_human_window:
-      decision: current_not_human_window
-      fixed_user_reply: 当前不是对人窗口。
-    window_continue_blocked:
-      decision: window_continue_blocked
-      human_contact_owner: 00-编排-总控
-      fixed_user_reply: 当前窗口续轮校验失败，请回到 /总控 重新派发。
-      next_required_action: /总控
-      recovery_action: reenter_total_control
-      allowed_block_reasons:
-        - missing_dispatch_snapshot
-        - dispatch_snapshot_missing_required_fields
-        - snapshot_role_prompt_sha_missing
-        - rebuilt_role_prompt_sha_missing
-        - snapshot_prompt_sha_mismatch
   primary_window_return_reason_tokens:
     - completed
     - blocked
     - need_user
     - worker_requested
     - scope_changed
-  project_package_completion_state: project_baseline_ready_10_unlocked
+  project_package_completion_state: project_baseline_ready_10
   prototype_entry_gate_blocker: prototype_entry_missing
 
 stage_order:

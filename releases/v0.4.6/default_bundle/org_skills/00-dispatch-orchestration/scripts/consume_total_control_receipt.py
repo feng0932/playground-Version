@@ -16,7 +16,6 @@ REQUIRED_REPLAY_FIELDS = (
     "current_phase",
     "return_reason",
     "recommended_return_target",
-    "recommended_total_control_state",
 )
 PRIMARY_WINDOW_CHILD_THREADS = {
     "01-编排-初始化项目包",
@@ -31,7 +30,6 @@ AUTHORITY_REPLAY_RETENTION_FIELD_MAP = {
     "current_phase": "latest_consumed_receipt_current_phase",
     "return_reason": "latest_consumed_receipt_return_reason",
     "recommended_return_target": "latest_consumed_receipt_recommended_return_target",
-    "recommended_total_control_state": "latest_consumed_receipt_recommended_total_control_state",
 }
 
 
@@ -166,7 +164,6 @@ def main(argv: list[str]) -> int:
             "current_phase": validated_receipt["current_phase"],
             "return_reason": validated_receipt["return_reason"],
             "recommended_return_target": validated_receipt["recommended_return_target"],
-            "recommended_total_control_state": validated_receipt["recommended_total_control_state"],
         }
         authority_writeback_input = {
             "dispatch_instance_id": validated_receipt["dispatch_instance_id"],
