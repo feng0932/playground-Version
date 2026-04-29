@@ -4,7 +4,7 @@
 
 `v0.4.6` 是 `v0.4.5` 之后的稳定线候选，目标是把现场暴露出的控制链和原型交付边界问题收回到 published truth、runtime gate 和测试里。
 
-开发仓中的这份 release note 是发版说明主编辑源；发布仓 `releases/v0.4.6/release-note.md` 只是导出副本。远端资产上传、公开 stable pointer 同步、install / doctor / runtime 验证完成前，它只能作为发版准备说明，不能单独证明正式发布完成。
+开发仓中的这份 release note 是发版说明主编辑源；发布仓 `releases/v0.4.6/release-note.md` 是导出副本。本轮 internal/Gitea 远端资产、公开 stable pointer、install / doctor / runtime 最小验证已经完成；fresh live transcript 仍未补齐。
 
 ## 1. 这个版本做了什么 / 本次变化
 
@@ -47,7 +47,7 @@
 - `installer_archive_sha256`
   - `bffe6e919e0526b94f30945f205a06b722698d89dad73b0bd99494a296cbe78d`
 
-当前本地重新构建后的 hash：
+当前正式远端 hash：
 
 - `bundle SHA256`
   - `2f7c507657747057cff3f04f4cd14da27478d950756a9cd5f8b89bb409a67544`
@@ -56,14 +56,14 @@
 
 当前准确口径：
 
-- `v0.4.6` 已形成 repo-local 冻结候选。
-- tracked `stable-release.json` 已按当前本地构建重算 hash。
-- 远端 release 资产还没有在本轮被上传验证。
+- `v0.4.6` 已完成 internal/Gitea 远端发布收口。
+- 远端 `stable-release.json` 已指向当前 hash。
+- internal/Gitea raw install / doctor / runtime 最小验证已通过。
 - fresh live transcript 还没有在本轮补齐。
 
 不能把这份文件说成：
 
-> `v0.4.6` 已正式远端发布，或者已经 `live-thread verified`。
+> `v0.4.6` 已经 `live-thread verified`，或者 Mac / Windows 现场问题已经被 fresh transcript 证明解决。
 
 ## 2. 让大模型去安装和更新的提示词
 
@@ -73,24 +73,24 @@
 
 1. 不声明 fresh live transcript 已通过。
 2. 不声明 Mac / Windows 现场问题已经被真实新包证明解决。
-3. 不把仓内 published truth 合入说成远端正式发布完成。
+3. 不把远端最小安装验证说成 fresh live transcript 通过。
 4. 不把 release note 当成 bundle 真源；bundle 真源仍是 `dev/install/default_bundle/`。
 
 ### 正式发版结果
 
-当前发版准备结果：
+当前正式发版结果：
 
 1. 开发仓 `main` 已包含 `v0.4.6` 包 A 和包 B 的源码状态。
-2. 本地 release 五件套已重新构建。
-3. tracked `stable-release.json` 已由 builder 反写为当前 hash。
+2. 发布仓远端 `releases/v0.4.6/` 资产已可访问。
+3. 发布仓远端根级 `stable-release.json` 已可访问且指向当前 hash。
+4. internal/Gitea raw install / doctor / runtime 最小验证已通过。
 
-仍需完成后才能宣称正式发版完成：
+仍不能宣称的范围：
 
-1. 发布仓远端 `releases/v0.4.6/` 资产可访问。
-2. 发布仓远端根级 `stable-release.json` 可访问且指向当前 hash。
-3. install / doctor / runtime 最小验证通过。
+1. fresh live transcript 已通过。
+2. Mac / Windows 现场问题已经被 fresh transcript 证明解决。
 
-下面提示词只能在远端 `releases/v0.4.6/` 资产上传、公开 `stable-release.json` 同步、远端抽样验证通过后使用。
+下面提示词可用于新机器执行正式安装或更新验证。
 
 如果对方设备不明确，先问清楚三件事：
 
