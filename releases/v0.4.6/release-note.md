@@ -50,9 +50,9 @@
 当前本地重新构建后的 hash：
 
 - `bundle SHA256`
-  - `e2228479d1b0241d920e01d00d22355c4ce551a6c13d682258ee5eb3121fb2af`
+  - `2f7c507657747057cff3f04f4cd14da27478d950756a9cd5f8b89bb409a67544`
 - `installer archive SHA256`
-  - `bfcd7cdaf8d64bec05dcdecb47f0842295a8300fa35c1b924d707dab5a6a4372`
+  - `f76988e1daf027373292788b6fb3bdd734bba7229e4ca473f3650a7edd84bd89`
 
 当前准确口径：
 

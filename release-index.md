@@ -17,7 +17,7 @@
 
 | version | channel | status | source_commit | artifact_root | release_note | notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `v0.4.6` | `release` | `exported` | `cbc353052d089bd74b09f6230e67b7f8ba09f1af` | `releases/v0.4.6/` | `releases/v0.4.6/release-note.md` | Post-merge review blockers cleared locally; remote tag/release page and install smoke pending |
+| `v0.4.6` | `release` | `exported` | `2d24dd01f1ff1b4bd0c9389ff0db59d5570ae15f` | `releases/v0.4.6/` | `releases/v0.4.6/release-note.md` | Post-merge review blockers cleared locally; remote tag/release page and install smoke pending |
 | `v0.4.5` | `release` | `released` | `c963f1c8aa8ee9b85bdbfb831ecff6391052fb5a` | `releases/v0.4.5/` | `releases/v0.4.5/release-note.md` | Dev-host regression `96 / 96` passed; release carrier refreshed; internal raw install entry kept at current `v0.4.5` bundle |
 | `v0.4.4` | `release` | `released` | `691ef3c439e5d4a9d2f4d348727f994a50927afc` | `releases/v0.4.4/` | `releases/v0.4.4/release-note.md` | Internal Gitea raw republish from `v0.4.5` |
 | `v0.4.2` | `release` | `released` | `a051f12428410d4e8dd10fee1a2c93c112c7b8d9` | `releases/v0.4.2/` | `releases/v0.4.2/release-note.md` | GitHub Release `ai-team-bundle-v0.4.2` hotfix-overwrite published |
