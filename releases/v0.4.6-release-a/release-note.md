@@ -16,7 +16,7 @@
 
 `10-执行-产品专家` 的 `recommended_return_target` 默认留空，由真实完成结果决定；不能把 `10 -> 10` 当成默认可消费回执。
 
-当前状态：本文件是发版前执行说明书。还没有推远端、没有打 tag、没有更新 release page，也没有 fresh live transcript 证明 Mac / Windows 现场问题已解决。
+当前状态：本版已完成 internal/Gitea 发布收口，并通过 raw install / doctor / runtime 最小验证。fresh live transcript 还没有补齐，所以不能说 Mac / Windows 现场问题已经被新 transcript 证明解决。
 
 ## 2. 让大模型去安装和更新的提示词
 

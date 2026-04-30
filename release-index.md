@@ -17,7 +17,7 @@
 
 | version | channel | status | source_commit | artifact_root | release_note | notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `v0.4.6-release-a` | `release` | `exported` | `94de4f36ab60f986d700e8074e3499ffff0b566b` | `releases/v0.4.6-release-a/` | `releases/v0.4.6-release-a/release-note.md` | Internal raw assets exported; remote smoke pending |
+| `v0.4.6-release-a` | `release` | `released` | `eae71e4ebeb6b6c725a65fd6dcf48e5388dcf3b9` | `releases/v0.4.6-release-a/` | `releases/v0.4.6-release-a/release-note.md` | Internal raw assets, stable pointer, install, doctor, and runtime smoke verified; fresh live transcript pending |
 | `v0.4.6` | `release` | `released` | `71de42dbe9e5347d8d102bf3c25205b7b5ba7c2c` | `releases/v0.4.6/` | `releases/v0.4.6/release-note.md` | Internal raw assets, stable pointer, install, doctor, and runtime smoke verified; fresh live transcript pending |
 | `v0.4.5` | `release` | `released` | `c963f1c8aa8ee9b85bdbfb831ecff6391052fb5a` | `releases/v0.4.5/` | `releases/v0.4.5/release-note.md` | Dev-host regression `96 / 96` passed; release carrier refreshed; internal raw install entry kept at current `v0.4.5` bundle |
 | `v0.4.4` | `release` | `released` | `691ef3c439e5d4a9d2f4d348727f994a50927afc` | `releases/v0.4.4/` | `releases/v0.4.4/release-note.md` | Internal Gitea raw republish from `v0.4.5` |
