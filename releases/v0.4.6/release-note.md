@@ -11,9 +11,11 @@
 这版改完后，规则变成了：
 
 1. `00` 负责总控、判路、显式派发、收回和重判。
-2. `01 / 10` 被 `00` 派发后，直接对人。
+2. `01 / 10` 被 `00` 派发后，必须由 Codex 真实创建子 agent 接管，不能再把 child prompt 给 `00` 自己代演。
 3. 其他子 agent 仍要显式派发，但不能对人。
 4. `01 / 10` 完成后，把结果交回 `00`。
+
+也就是说，`dispatch_allowed` 只表示“可以派发”，不再表示“root 线程已经接人成功”；真正的成功证据要看会话记录里有没有匹配的 `spawn_agent` 调用，以及同一个 `call_id` 后续成功返回的 `function_call_output.agent_id`。
 
 第二，`10` 要先把人的想法问出来。
 
@@ -42,7 +44,7 @@
 
 > 这版解决的是“派发后有人接、产品先问清、原型前先确认、交付出来的是可看的原型”。
 
-本版已经完成 internal/Gitea 发布和最小安装 / doctor / runtime 验证；fresh live transcript 还没有补齐，所以不能说 Mac / Windows 现场问题已经被新 transcript 证明解决。
+本版当前是发版前候选说明。只有完成合并、导出、internal/Gitea 远端投影更新，以及 raw install / doctor / runtime 最小验证后，才能把状态改成“已发布”。fresh live transcript 还没有补齐，所以不能说 Mac / Windows 现场问题已经被新 transcript 证明解决。
 
 ## 2. 让大模型去安装和更新的提示词
 

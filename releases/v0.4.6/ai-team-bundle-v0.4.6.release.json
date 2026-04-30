@@ -7,6 +7,6 @@
   "tarball_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/releases/v0.4.6/ai-team-bundle-v0.4.6.tar.gz",
   "manifest_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/releases/v0.4.6/ai-team-bundle-v0.4.6.manifest.json",
   "installer_archive_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/releases/v0.4.6/ai-team-bundle-v0.4.6-installer.tar.gz",
-  "installer_archive_sha256": "f76988e1daf027373292788b6fb3bdd734bba7229e4ca473f3650a7edd84bd89",
-  "bundle_sha256": "2f7c507657747057cff3f04f4cd14da27478d950756a9cd5f8b89bb409a67544"
+  "installer_archive_sha256": "fd2e6ba50d12ca919fadeebaeb2f1b017298c4ac3ebdc1175579099c4b519a6e",
+  "bundle_sha256": "3272ec2499040a7c797d63c28223fa038678acee1bca11aae9f673a6307bae52"
 }

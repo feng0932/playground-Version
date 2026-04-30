@@ -58,7 +58,7 @@
 1. 机器级绿灯
 2. 项目级绿灯
 3. bundle 资产完整性绿灯
-项目级本地标记只允许写入 `<项目根>/.ai-team/install.json`、`<项目根>/.ai-team/runtime.json`、`<项目根>/.ai-team/state/*.json`、`<项目根>/.ai-team/state/governance-log.jsonl`，以及由此维护的 `<项目根>/.ai-team/state/governance-latest.json`，并保持本地不入 git。
+项目级本地标记只允许写入 `<项目根>/.ai-team/install.json`、`<项目根>/.ai-team/runtime.json`、`<项目根>/.ai-team/state/*.json`、`<项目根>/.ai-team/state/dispatch-prompts/*.md`、`<项目根>/.ai-team/state/governance-log.jsonl`，以及由此维护的 `<项目根>/.ai-team/state/governance-latest.json`，并保持本地不入 git。
 ## 3. 明确禁止
 禁止把以下位置当默认过程文件目录：
 - `docs/superpowers/`
