@@ -1,106 +1,58 @@
-# v0.4.6 中文发版说明
+# v0.4.6 中文发版执行说明书
 
-## 0. 版本定位
+## 1. 这个版本做了什么
 
-`v0.4.6` 是 `v0.4.5` 之后的稳定线候选，目标是把现场暴露出的控制链和原型交付边界问题收回到 published truth、runtime gate 和测试里。
+`v0.4.6` 这次不是换一套新话术，而是把 `v0.4.5` 现场继续暴露的问题收回到正式规则、门禁和测试里。
 
-开发仓中的这份 release note 是发版说明主编辑源；发布仓 `releases/v0.4.6/release-note.md` 是导出副本。本轮 internal/Gitea 远端资产、公开 stable pointer、install / doctor / runtime 最小验证已经完成；fresh live transcript 仍未补齐。
+第一，派发后谁接人要清楚。
 
-## 1. 这个版本做了什么 / 本次变化
+之前的问题是：`00` 说已经派发，但后续对话容易又回到 `00` 代演，用户看起来还要理解额外控制动作。
 
-`v0.4.6` 这次先收住三件事：
+这版改完后，规则变成了：
 
-第一件事，是把 `v0.4.5` 后加进正式链路的 hidden activation / unlock / window 私加层退掉。
+1. `00` 负责总控、判路、显式派发、收回和重判。
+2. `01 / 10` 被 `00` 派发后，直接对人。
+3. 其他子 agent 仍要显式派发，但不能对人。
+4. `01 / 10` 完成后，把结果交回 `00`。
 
-这版冻结后的主链重新回到人原来要的口径：
+第二，`10` 要先把人的想法问出来。
 
-1. `00` 只负责总控、判路、显式派发、收回和重判。
-2. `01 / 10` 被 `00` 显式派发后，直接对人。
-3. 除了 `01 / 10`，其他子 agent 仍要显式派发，但不能对人。
-4. `01 / 10` 结束后，把结果交回 `00`。
-
-第二件事，是把 `10` 的主问职责做成硬门。
-
-进入模块正文或原型链前，`10` 必须收齐 4 组信息：
+进入 PRD 正文或原型链前，`10` 必须收齐 4 组信息：
 
 1. 核心问题与成功标准
 2. 本轮做什么 / 不做什么
 3. 主链 / 分支 / 异常 / 恢复
 4. 页面 / 状态 / 字段 / 验收
 
-任何一组没收齐，都不能进入 PRD 正文收口，也不能进入原型前确认。
+任何一组没收齐，都不能继续往下收口。
 
-第三件事，是把原型前低保真做成确认门。
+第三，原型设计前要先做轻量低保真确认。
 
 固定顺序是：
 
 > 聊天内低保真预演 -> 人确认 -> 最小正式回执 -> 才能进原型设计
 
-低保真必须是更像页面的粗稿，例如页面块图、线框块图、ASCII 页面草图；只给页面清单、状态清单、文字提纲不算完成。
+这里的低保真不是完整设计稿，也不是再加一轮重流程。它只是一张或一段在聊天里能看懂的页面雏形，例如页面块图、线框块图、ASCII 页面草图。页面清单、状态清单、文字提纲不能冒充低保真预演。
 
-本次冻结候选合并还审掉了旧 `stable-release.json` 的包 hash。旧 hash 不能继续代表当前冻结候选内容。
+第四，原型交付要回到“能打开、能看、能对照”的边界。
 
-旧 hash：
+原型专家交付的东西必须像用户真正要看的页面，而不是说明文、检查清单或内部字段展示。页面结构要跟本轮确认过的主链和低保真一致；如果做不到，就不能把解释型原型说成正式原型。
 
-- `bundle_sha256`
-  - `8154233f2d92cb44c8c49dae8c2d9820c529d850048a3dd85ea54ab7e5ee3de0`
-- `installer_archive_sha256`
-  - `bffe6e919e0526b94f30945f205a06b722698d89dad73b0bd99494a296cbe78d`
+如果只用一句话概括 `v0.4.6`：
 
-当前正式远端 hash：
+> 这版解决的是“派发后有人接、产品先问清、原型前先确认、交付出来的是可看的原型”。
 
-- `bundle SHA256`
-  - `2f7c507657747057cff3f04f4cd14da27478d950756a9cd5f8b89bb409a67544`
-- `installer archive SHA256`
-  - `f76988e1daf027373292788b6fb3bdd734bba7229e4ca473f3650a7edd84bd89`
-
-当前准确口径：
-
-- `v0.4.6` 已完成 internal/Gitea 远端发布收口。
-- 远端 `stable-release.json` 已指向当前 hash。
-- internal/Gitea raw install / doctor / runtime 最小验证已通过。
-- fresh live transcript 还没有在本轮补齐。
-
-不能把这份文件说成：
-
-> `v0.4.6` 已经 `live-thread verified`，或者 Mac / Windows 现场问题已经被 fresh transcript 证明解决。
+本版已经完成 internal/Gitea 发布和最小安装 / doctor / runtime 验证；fresh live transcript 还没有补齐，所以不能说 Mac / Windows 现场问题已经被新 transcript 证明解决。
 
 ## 2. 让大模型去安装和更新的提示词
 
-### 不包含内容
+设备选择：
 
-本版本说明不包含下面结论：
-
-1. 不声明 fresh live transcript 已通过。
-2. 不声明 Mac / Windows 现场问题已经被真实新包证明解决。
-3. 不把远端最小安装验证说成 fresh live transcript 通过。
-4. 不把 release note 当成 bundle 真源；bundle 真源仍是 `dev/install/default_bundle/`。
-
-### 正式发版结果
-
-当前正式发版结果：
-
-1. 开发仓 `main` 已包含 `v0.4.6` 包 A 和包 B 的源码状态。
-2. 发布仓远端 `releases/v0.4.6/` 资产已可访问。
-3. 发布仓远端根级 `stable-release.json` 已可访问且指向当前 hash。
-4. internal/Gitea raw install / doctor / runtime 最小验证已通过。
-
-仍不能宣称的范围：
-
-1. fresh live transcript 已通过。
-2. Mac / Windows 现场问题已经被 fresh transcript 证明解决。
-
-下面提示词可用于新机器执行正式安装或更新验证。
-
-如果对方设备不明确，先问清楚三件事：
-
-1. 是 `macOS` 还是 `Windows`
-2. 用的是 `bash/zsh` 还是 `PowerShell`
-3. 当前机器有没有网络和文件写权限
-
-### 给大模型的新安装提示词
+### 2.1 新安装
 
 #### macOS
+
+把下面这段直接发给大模型：
 
 ```text
 你现在要在本机实际执行 ai-team v0.4.6 的正式新安装，不要只解释步骤，要真的运行命令，并把关键结果输出出来。
@@ -137,6 +89,8 @@ ls -la .ai-team/state 2>/dev/null || true
 
 #### Windows
 
+把下面这段直接发给大模型：
+
 ```text
 你现在要在本机实际执行 ai-team v0.4.6 的正式新安装，不要只解释步骤，要真的运行命令，并把关键结果输出出来。
 
@@ -172,27 +126,27 @@ Get-ChildItem .ai-team\\state -Force -ErrorAction SilentlyContinue
 - $env:TEMP\\ai-team-install-v0.4.6.log 的关键片段
 ```
 
-### 给大模型的更新提示词
+### 2.2 更新
 
 #### macOS
 
+把下面这段直接发给大模型：
+
 ```text
-你现在要在本机实际执行 ai-team v0.4.6 的正式更新，不要只解释步骤，要真的运行命令，并把关键结果输出出来。
+你现在要在本机实际执行 ai-team v0.4.6 的正式更新，不要只解释步骤，要真的运行命令，并把更新前后结果对照输出。
 
 要求：
 1. 先确认当前机器有 shell、网络和文件写权限；如果没有，直接说明不能执行。
 2. 更新前先采集旧状态。
-3. 使用正式安装入口，不要手工拼装 bundle。
+3. 使用正式安装入口执行更新，不要手工拼装 bundle。
 4. 保留完整 stdout/stderr。
 5. 更新完成后继续执行校验命令。
 6. 任何一步失败都立即停止，不要假装成功。
 
-更新前先执行：
+执行命令：
 export PATH="$HOME/.ai-team/bin:$PATH"
 which ai-team || true
 ai-team doctor --project-root . || true
-
-执行命令：
 curl -fsSL http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.sh | bash -s -- v0.4.6 2>&1 | tee /tmp/ai-team-update-v0.4.6.log
 
 更新后继续执行：
@@ -217,23 +171,23 @@ cat .ai-team/runtime.json 2>/dev/null || true
 
 #### Windows
 
+把下面这段直接发给大模型：
+
 ```text
-你现在要在本机实际执行 ai-team v0.4.6 的正式更新，不要只解释步骤，要真的运行命令，并把关键结果输出出来。
+你现在要在本机实际执行 ai-team v0.4.6 的正式更新，不要只解释步骤，要真的运行命令，并把更新前后结果对照输出。
 
 要求：
 1. 先确认当前机器有 PowerShell、网络和文件写权限；如果没有，直接说明不能执行。
 2. 更新前先采集旧状态。
-3. 使用正式安装入口，不要手工拼装 bundle。
+3. 使用正式安装入口执行更新，不要手工拼装 bundle。
 4. 保留完整 stdout/stderr。
 5. 更新完成后继续执行校验命令。
 6. 任何一步失败都立即停止，不要假装成功。
 
-更新前先执行：
+执行命令：
 $env:Path = "$HOME\\.ai-team\\bin;$env:Path"
 where.exe ai-team
 ai-team doctor --project-root . *>&1
-
-执行命令：
 $script = Join-Path $env:TEMP "install-ai-team-v0.4.6.ps1"
 Invoke-WebRequest http://192.168.1.152/yuhua/playground-Version/raw/branch/main/install-ai-team.ps1 -UseBasicParsing -OutFile $script
 powershell -ExecutionPolicy Bypass -File $script -Version v0.4.6 *>&1 | Tee-Object -FilePath "$env:TEMP\\ai-team-update-v0.4.6.log"
