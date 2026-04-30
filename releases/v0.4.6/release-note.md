@@ -44,7 +44,7 @@
 
 > 这版解决的是“派发后有人接、产品先问清、原型前先确认、交付出来的是可看的原型”。
 
-本版当前是发版前候选说明。只有完成合并、导出、internal/Gitea 远端投影更新，以及 raw install / doctor / runtime 最小验证后，才能把状态改成“已发布”。fresh live transcript 还没有补齐，所以不能说 Mac / Windows 现场问题已经被新 transcript 证明解决。
+本版已完成 internal/Gitea 发布收口，并通过 raw install / doctor / runtime 最小验证。fresh live transcript 还没有补齐，所以不能说 Mac / Windows 现场问题已经被新 transcript 证明解决。
 
 ## 2. 让大模型去安装和更新的提示词
 
