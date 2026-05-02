@@ -17,6 +17,7 @@
 
 | version | channel | status | source_commit | artifact_root | release_note | notes |
 | --- | --- | --- | --- | --- | --- | --- |
+| `v0.4.7-test.2` | `release-candidate` | `exported` | `2d98658e0e66c031e5c63d2199e55c86dffc6acf` | `candidates/v0.4.7-test.2/` | `candidates/v0.4.7-test.2/release-note.md` | CR-006 test candidate; fixes latest Terminal Receipt extraction from accumulated process file; stable pointer not switched |
 | `v0.4.7-test.1` | `release-candidate` | `exported` | `717080292b8099333bebce81c269fcecf7388f30` | `candidates/v0.4.7-test.1/` | `candidates/v0.4.7-test.1/release-note.md` | Test candidate for real install, total-control dispatch, child receipt, and next-hop validation; stable pointer not switched |
 | `v0.4.6-release-a` | `release` | `released` | `eae71e4499f12447c537d514ae396c54b29c08ab` | `releases/v0.4.6-release-a/` | `releases/v0.4.6-release-a/release-note.md` | Internal raw assets, stable pointer, install, doctor, and runtime smoke verified; fresh live transcript pending |
 | `v0.4.6` | `release` | `released` | `71de42dbe9e5347d8d102bf3c25205b7b5ba7c2c` | `releases/v0.4.6/` | `releases/v0.4.6/release-note.md` | Internal raw assets, stable pointer, install, doctor, and runtime smoke verified; fresh live transcript pending |
