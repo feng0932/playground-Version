@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "channel": "release-candidate",
+  "bundle_version": "v0.4.7-test.1",
+  "bundle_source": "gitea-raw",
+  "tag": "ai-team-bundle-v0.4.7-test.1",
+  "tarball_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/candidates/v0.4.7-test.1/ai-team-bundle-v0.4.7-test.1.tar.gz",
+  "manifest_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/candidates/v0.4.7-test.1/ai-team-bundle-v0.4.7-test.1.manifest.json",
+  "installer_archive_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/candidates/v0.4.7-test.1/ai-team-bundle-v0.4.7-test.1-installer.tar.gz",
+  "installer_archive_sha256": "61ef0f9a0a857a155bbf69a2d8fefdfd75d72c8b4a10f90eb50246d941d72505",
+  "bundle_sha256": "fdccb6f2a47a504c064b1cdccda655b25c404ef648f7cc97b8ea4b4742f6004c"
+}

@@ -1,0 +1,13 @@
+{
+  "source_repo": "Playground-English",
+  "source_branch": "v0.4.7",
+  "source_commit": "717080292b8099333bebce81c269fcecf7388f30",
+  "frozen_candidate_commit": "386b7ff658a515ada721de4b20088d6c61f8726e",
+  "bundle_version": "v0.4.7-test.1",
+  "channel": "release-candidate",
+  "bundle_sha256": "fdccb6f2a47a504c064b1cdccda655b25c404ef648f7cc97b8ea4b4742f6004c",
+  "installer_archive_sha256": "61ef0f9a0a857a155bbf69a2d8fefdfd75d72c8b4a10f90eb50246d941d72505",
+  "exported_at": "2026-05-03T03:08:04+08:00",
+  "stable_switched": false,
+  "external_deployed_before_export": false
+}
