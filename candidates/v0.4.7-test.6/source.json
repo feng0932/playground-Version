@@ -1,0 +1,15 @@
+{
+  "source_repo": "Playground-English",
+  "source_branch": "cr/v0.4.7-cr004-product-discovery",
+  "source_commit": "d6f08aaab8c4919bb5d986cd1076bf088d30268d",
+  "bundle_version": "v0.4.7-test.6",
+  "channel": "release-candidate",
+  "bundle_sha256": "d3f0900ecc03d32f151222eaf67c07f497e09c9ab604b222bde9322d02aa1d5c",
+  "installer_archive_sha256": "72c861c0b34bf8a999613203369799ca35ec71aea282347b29373aaeff45333f",
+  "exported_at": "2026-05-03T23:35:21+08:00",
+  "stable_switched": false,
+  "github_release_performed": false,
+  "git_remote_used": "internal",
+  "previous_test_candidate": "v0.4.7-test.5",
+  "release_note_source_commit": "d6f08aaab8c4919bb5d986cd1076bf088d30268d"
+}
