@@ -17,6 +17,7 @@
 
 | version | channel | status | source_commit | artifact_root | release_note | notes |
 | --- | --- | --- | --- | --- | --- | --- |
+| `v0.4.7-test.5` | `release-candidate` | `exported` | `8f4ee33466c1c582e757461c7f2b74d3886bd7e0` | `candidates/v0.4.7-test.5/` | `candidates/v0.4.7-test.5/release-note.md` | CR-004 test candidate; product discovery screening/deepening receipts and 20/21/22 review handoff; stable pointer not switched; GitHub release excluded |
 | `v0.4.7-test.3` | `release-candidate` | `exported` | `3a78e35037ddb8b1dfb6ed2aacb3181c81ca9161` | `candidates/v0.4.7-test.3/` | `candidates/v0.4.7-test.3/release-note.md` | CR-007 test candidate; fixes list-form Terminal Receipt field parsing after real test.2 read-receipt failure; stable pointer not switched |
 | `v0.4.7-test.2` | `release-candidate` | `exported` | `2d98658e0e66c031e5c63d2199e55c86dffc6acf` | `candidates/v0.4.7-test.2/` | `candidates/v0.4.7-test.2/release-note.md` | CR-006 test candidate; fixes latest Terminal Receipt extraction from accumulated process file; stable pointer not switched |
 | `v0.4.7-test.1` | `release-candidate` | `exported` | `717080292b8099333bebce81c269fcecf7388f30` | `candidates/v0.4.7-test.1/` | `candidates/v0.4.7-test.1/release-note.md` | Test candidate for real install, total-control dispatch, child receipt, and next-hop validation; stable pointer not switched |
