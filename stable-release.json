@@ -7,6 +7,6 @@
   "tarball_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/releases/v0.4.7-Hotfix/ai-team-bundle-v0.4.7-Hotfix.tar.gz",
   "manifest_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/releases/v0.4.7-Hotfix/ai-team-bundle-v0.4.7-Hotfix.manifest.json",
   "installer_archive_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/releases/v0.4.7-Hotfix/ai-team-bundle-v0.4.7-Hotfix-installer.tar.gz",
-  "installer_archive_sha256": "0feeb44f9ad3b548327b86147014e6ec9aa5267801093fe9e9b7920c6f2272a3",
+  "installer_archive_sha256": "8ac0dcafbce48c3ed70e87004747d20066a3967eee9e8162bbdec138ebf6b107",
   "bundle_sha256": "abdc8dae47a4e35ac9a908c69f0e0f55b0cfee1bb74df48add1e1e29eab12ee6"
 }
