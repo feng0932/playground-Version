@@ -17,6 +17,7 @@
 
 | version | channel | status | source_commit | artifact_root | release_note | notes |
 | --- | --- | --- | --- | --- | --- | --- |
+| `v0.4.7` | `release` | `released` | `4bcd210e087b757c1b3076f4053e086942a691da` | `releases/v0.4.7/` | `releases/v0.4.7/release-note.md` | CR-004 product discovery stable release; internal raw assets and stable pointer switched; GitHub release excluded by user |
 | `v0.4.7-test.6` | `release-candidate` | `exported` | `d6f08aaab8c4919bb5d986cd1076bf088d30268d` | `candidates/v0.4.7-test.6/` | `candidates/v0.4.7-test.6/release-note.md` | CR-004 first-pass receipt hardening candidate; validates whether 01/10 first Terminal Receipt can be consumed directly by 00 without correction; stable pointer not switched; GitHub release excluded |
 | `v0.4.7-test.5` | `release-candidate` | `exported` | `bb70fd2e16cfc79e8e4d47575d635371a8722acc` | `candidates/v0.4.7-test.5/` | `candidates/v0.4.7-test.5/release-note.md` | CR-004 test candidate; product discovery screening/deepening receipts and 20/21/22 review handoff; stable pointer not switched; GitHub release excluded |
 | `v0.4.7-test.3` | `release-candidate` | `exported` | `3a78e35037ddb8b1dfb6ed2aacb3181c81ca9161` | `candidates/v0.4.7-test.3/` | `candidates/v0.4.7-test.3/release-note.md` | CR-007 test candidate; fixes list-form Terminal Receipt field parsing after real test.2 read-receipt failure; stable pointer not switched |
