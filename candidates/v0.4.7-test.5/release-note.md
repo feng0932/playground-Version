@@ -41,6 +41,7 @@
 4. 保留完整 stdout/stderr。
 5. 安装完成后继续执行校验命令。
 6. 任一步失败都立即停止，不要脑补成功。
+7. 只做安装现场验收和总控入口检查；如果 runtime 返回 dispatch_allowed，只记录 host_native_dispatch，不要继续调用 spawn_agent。
 
 执行命令：
 set -o pipefail
@@ -66,6 +67,16 @@ cat .ai-team/runtime.json 2>/dev/null || true
 - ai-team runtime --action total_control_entry 的结果
 - 是否出现 checksum mismatch、metadata fetch failure、downgrade block
 - /tmp/ai-team-install-v0.4.7-test.5.log 的关键片段
+
+输出格式必须包含：
+## ai-team v0.4.7-test.5 安装现场验收摘要
+- 新安装是否完成：是 / 否
+- 实际安装到的 bundle_version / release_tag：v0.4.7-test.5 / ai-team-bundle-v0.4.7-test.5
+- 渠道：release-candidate
+- ai-team doctor 的关键字段：machine_vs_project=...；risk_level=...；recommended_action=...
+- runtime 入口结果：decision=...；dispatch_target=...；prompt_text=null；host_native_dispatch.required_tool=spawn_agent
+- 现场验收结论：通过安装层 smoke / 未通过，原因是...
+- 业务初始化状态：停止在安装验收，不进入项目业务初始化。
 ```
 
 #### Windows
@@ -82,6 +93,7 @@ cat .ai-team/runtime.json 2>/dev/null || true
 4. 保留完整 stdout/stderr。
 5. 安装完成后继续执行校验命令。
 6. 任一步失败都立即停止，不要脑补成功。
+7. 只做安装现场验收和总控入口检查；如果 runtime 返回 dispatch_allowed，只记录 host_native_dispatch，不要继续调用 spawn_agent。
 
 执行命令：
 $env:AI_TEAM_RELEASE_METADATA_URL = "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/candidates/v0.4.7-test.5/ai-team-bundle-v0.4.7-test.5.release.json"
@@ -110,6 +122,16 @@ Get-Content .ai-team\runtime.json -ErrorAction SilentlyContinue
 - ai-team runtime --action total_control_entry 的结果
 - 是否出现 checksum mismatch、metadata fetch failure、downgrade block
 - $env:TEMP\ai-team-install-v0.4.7-test.5.log 的关键片段
+
+输出格式必须包含：
+## ai-team v0.4.7-test.5 安装现场验收摘要
+- 新安装是否完成：是 / 否
+- 实际安装到的 bundle_version / release_tag：v0.4.7-test.5 / ai-team-bundle-v0.4.7-test.5
+- 渠道：release-candidate
+- ai-team doctor 的关键字段：machine_vs_project=...；risk_level=...；recommended_action=...
+- runtime 入口结果：decision=...；dispatch_target=...；prompt_text=null；host_native_dispatch.required_tool=spawn_agent
+- 现场验收结论：通过安装层 smoke / 未通过，原因是...
+- 业务初始化状态：停止在安装验收，不进入项目业务初始化。
 ```
 
 ### 2.2 更新
@@ -128,6 +150,7 @@ Get-Content .ai-team\runtime.json -ErrorAction SilentlyContinue
 4. 本版本是 release-candidate，不是 stable。
 5. 保留完整 stdout/stderr。
 6. 任一步失败都立即停止，不要脑补成功。
+7. 只做更新现场验收和总控入口检查；如果 runtime 返回 dispatch_allowed，只记录 host_native_dispatch，不要继续调用 spawn_agent。
 
 执行命令：
 set -o pipefail
@@ -148,6 +171,7 @@ ai-team runtime --project-root . --action total_control_entry
 - ai-team runtime --action total_control_entry 的结果
 - 是否出现 checksum mismatch、metadata fetch failure、downgrade block
 - /tmp/ai-team-update-v0.4.7-test.5.log 的关键片段
+- 是否停止在更新验收、不进入项目业务初始化
 ```
 
 #### Windows
@@ -164,6 +188,7 @@ ai-team runtime --project-root . --action total_control_entry
 4. 本版本是 release-candidate，不是 stable。
 5. 保留完整 stdout/stderr。
 6. 任一步失败都立即停止，不要脑补成功。
+7. 只做更新现场验收和总控入口检查；如果 runtime 返回 dispatch_allowed，只记录 host_native_dispatch，不要继续调用 spawn_agent。
 
 执行命令：
 $env:Path = "$HOME\.ai-team\bin;$env:Path"
@@ -186,4 +211,5 @@ ai-team runtime --project-root . --action total_control_entry
 - ai-team runtime --action total_control_entry 的结果
 - 是否出现 checksum mismatch、metadata fetch failure、downgrade block
 - $env:TEMP\ai-team-update-v0.4.7-test.5.log 的关键片段
+- 是否停止在更新验收、不进入项目业务初始化
 ```
