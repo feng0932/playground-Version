@@ -1,0 +1,4 @@
+interface:
+  display_name: "PRD需求理解分析"
+  short_description: "按统一框架完成PRD需求理解分析、证据提取与标准化结果输出"
+  default_prompt: "严格按需求理解分析框架分析我提供的PRD文档，并输出带证据的标准化分析结果"
