@@ -1,0 +1,17 @@
+interface:
+  display_name: "03.submission-status-governance"
+  short_description: "维护完整提交包状态真源，执行 Gate A sync/check，并在需要时处理 Gate B 写回链"
+  default_prompt: "使用 $03-submission-status-governance 对真实项目执行提交包状态治理：先更新 80-完整提交包/00-提交状态.json，完成 Gate A 的 sync -> check；若当前目标还包含工程交接判断，再运行 Gate B 写回并补跑 sync -> check。"
+execution:
+  required_inputs:
+    - project_root
+  optional_inputs:
+    - mode
+  defaults:
+    mode: full
+  modes:
+    sync: "仅同步展示层与 PRD 头部状态"
+    check: "仅执行一致性校验"
+    full: "先同步，再校验"
+    handoff: "执行 Gate B 校验并把 engineering_handoff_required / engineering_handoff_ready 回写到 00-提交状态.json，随后补跑 sync -> check"
+    publish: "将 skill 中的发布副本同步到 assets/project_skeleton/00-项目包模板"

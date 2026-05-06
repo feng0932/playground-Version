@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "channel": "release-candidate",
+  "bundle_version": "v0.4.7-Hotfix-1-rc2",
+  "bundle_source": "gitea-raw",
+  "tag": "ai-team-bundle-v0.4.7-Hotfix-1-rc2",
+  "tarball_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/candidates/v0.4.7-Hotfix-1-rc2/ai-team-bundle-v0.4.7-Hotfix-1-rc2.tar.gz",
+  "manifest_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/candidates/v0.4.7-Hotfix-1-rc2/ai-team-bundle-v0.4.7-Hotfix-1-rc2.manifest.json",
+  "installer_archive_url": "http://192.168.1.152/yuhua/playground-Version/raw/branch/main/candidates/v0.4.7-Hotfix-1-rc2/ai-team-bundle-v0.4.7-Hotfix-1-rc2-installer.tar.gz",
+  "installer_archive_sha256": "fff021198deccba60f27031fe4a1fbd0a7824e4d6ef7abcfb806ed7e7471944d",
+  "bundle_sha256": "325db62787d4c582d3bf216be2b73d4c82b6575ccde5ea17453f742e6bfdcb43"
+}

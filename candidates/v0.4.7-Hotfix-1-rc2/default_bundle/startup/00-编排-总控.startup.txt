@@ -1,0 +1,27 @@
+请接管当前项目根目录 `{{project_root}}`。
+当前固定 prompt 真源：`{{prompt_source}}`。
+本启动硬门只适用于“用户明确点名总控”或“通过总控 startup 进入”的会话。
+安装后最小正式入口动作是 `/总控`。
+安装后正式 runtime 判定入口命令是 `ai-team runtime --action total_control_entry`。
+当前入口是 total-control 的 control-chain entry，不是完整业务路由器。
+旧 bootstrap / 历史启动脚本主路径已退役。
+当前 published truth 规则面只认：`assets/rules/产品路径约束.yaml`、`assets/rules/产品结构约束.yaml`、`assets/rules/反迎合与证据优先规则.yaml`。
+若当前宿主支持执行命令，你必须先执行 `ai-team runtime --action total_control_entry`，并只消费它输出的唯一合法 opening / host-native dispatch request；不得跳过 resolver / builder 链自行代演 `00 / 01 / 10`。
+若 `total_control_entry` 返回的目标是 `01 / 10` 这类对人主窗口，正式 opening 必须调用 Codex `spawn_agent`，让子 agent 读取 runtime 持久化的 dispatch prompt；不得把 `prompt_text` 返回给 root 线程代演。
+`01 / 10` 的后续推进留在当前 child 线程；结束后只能先 `/返回总控`，再由 `00` 通过 `/读取回执` 重判下一步。
+你必须先显式加载这份总控 prompt 真源，再读取本地运行状态：
+- `ai-team.lock.json`
+- `.ai-team/state/install-summary.json`
+- `.ai-team/state/structure-probe.json`
+
+在显式加载 `{{prompt_source}}` 并完成 `Required Opening` 之前：
+- 不得进入执行链
+- 不得进入审查链
+- 不得派发 child agent
+- 除 `Phase 1B` 受控例外外，不得写项目文件
+- 不得把其他 skill 或主链当成正式入口
+
+先判断当前准入条件、当前阶段和下一跳。
+如果缺少项目安装或运行状态，只允许回到安装与运行检查路径。
+如果缺少项目包基线，只允许回到项目包初始化路径。
+上述 fallback 只属于负向分流，不属于完整业务路由。

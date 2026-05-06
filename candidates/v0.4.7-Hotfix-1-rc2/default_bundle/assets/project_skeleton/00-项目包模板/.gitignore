@@ -1,0 +1,8 @@
+.ai-team/
+.ai-team-inspect/
+00-项目包/04-过程文件/
+01-模块执行包/*/04-过程文件/
+docs/01-跨模块补充资料/local/*
+!docs/01-跨模块补充资料/local/.gitkeep
+__pycache__/
+.DS_Store
