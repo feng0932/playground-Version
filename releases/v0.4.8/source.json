@@ -1,0 +1,14 @@
+{
+  "source_repo": "Playground-English",
+  "source_branch": "main",
+  "source_commit": "710f91847d7490747687791b61d64629f0065074",
+  "bundle_version": "v0.4.8",
+  "channel": "stable",
+  "bundle_sha256": "95af19e8f3b13c61834ee7ef824d15c04746e7cb4e693963ee60deac0042365f",
+  "installer_archive_sha256": "b0ef7b4a34cf85be6cbe38ca84ba25ec72e54413aeb9aedaf2542fad1ab17bd2",
+  "exported_at": "2026-05-07T06:56:25+08:00",
+  "stable_switched": true,
+  "github_release_performed": false,
+  "git_remote_used": "internal",
+  "release_note_source_commit": "710f91847d7490747687791b61d64629f0065074"
+}
