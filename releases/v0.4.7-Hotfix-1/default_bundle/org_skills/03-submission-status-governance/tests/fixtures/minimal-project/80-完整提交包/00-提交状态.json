@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "updated_at": "2026-04-02",
+  "updated_by": "测试",
+  "status": {
+    "prd": "approved",
+    "prototype": "approved",
+    "review": "approved",
+    "phase": "ready_for_human_review",
+    "allow_human_review": true,
+    "engineering_handoff_required": false,
+    "engineering_handoff_ready": false,
+    "last_review_batch": "review-2026-04-02",
+    "gates": {
+      "validators_passed": true,
+      "status_synced": true,
+      "consistency_check_passed": true,
+      "review_receipts_present": true,
+      "review_blockers_cleared": true
+    }
+  },
+  "artifacts": {
+    "overview_file": "80-完整提交包/00-提交说明.md",
+    "prd_index": "80-完整提交包/01-合并PRD/00-PRD索引.md",
+    "prototype_index": "80-完整提交包/02-原型索引/00-原型入口.md",
+    "review_index": "80-完整提交包/03-合并评审记录/00-评审索引.md",
+    "audit_globs": [
+      "80-完整提交包/00-提交说明.md",
+      "80-完整提交包/01-合并PRD/00-PRD索引.md",
+      "80-完整提交包/02-原型索引/00-原型入口.md",
+      "80-完整提交包/03-合并评审记录/00-评审索引.md",
+      "01-模块执行包/示例模块/01-PRD/示例-PRD.md"
+    ],
+    "forbidden_substrings": [
+      "-PRD-draft.md",
+      "PRD draft",
+      "PRD in_review",
+      "待评审"
+    ],
+    "overview_status_rows": {
+      "示例模块": "`approved`"
+    },
+    "prd_files": [
+      "01-模块执行包/示例模块/01-PRD/示例-PRD.md"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "source_repo": "Playground-English",
+  "source_branch": "main",
+  "source_commit": "9b759e4d430308697491756d73f150971c53ad1c",
+  "bundle_version": "v0.4.7-Hotfix-1",
+  "channel": "stable",
+  "bundle_sha256": "b33f3182d84f97cfafd2f8dfdcae1c282e3e1e2433e912a808c335804a8464a9",
+  "installer_archive_sha256": "9a6c39a4aa78aec67c976ea0b5ef91b6ff6713d1196a0e9ab7d4b2efab784bf7",
+  "exported_at": "2026-05-06T21:00:00+08:00",
+  "stable_switched": true,
+  "github_release_performed": false,
+  "git_remote_used": "internal",
+  "release_note_source_commit": "e5cf2c17b08e06c63d5e8924ea24183fe7f6be4f"
+}
