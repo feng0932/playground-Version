@@ -22,6 +22,7 @@ $StateDir = Join-Path $InstallBase "state"
 $MachineStatePath = Join-Path $StateDir "machine-install.json"
 $InstallHistoryPath = Join-Path $StateDir "install-history.jsonl"
 $LogPath = Join-Path $StateDir "install-ai-team-bootstrap.log"
+$ProjectRoot = if ($env:AI_TEAM_PROJECT_ROOT) { $env:AI_TEAM_PROJECT_ROOT } else { (Get-Location).Path }
 $HumanOutputDone = $false
 $ProgressPreference = "SilentlyContinue"
 
@@ -41,6 +42,7 @@ function Write-HumanFailure {
 function Write-HumanSuccess {
     $script:HumanOutputDone = $true
     Write-Host "安装完成：ai-team $ResolvedVersion 已接入当前项目。"
+    Write-Host "项目 runtime：ready"
     Write-Host "下一步：在项目根目录打开 Codex，输入："
     Write-Host "/总控 请接管当前项目，并授权派发子agent"
     Write-Host "日志：$LogPath"
@@ -61,8 +63,24 @@ New-Item -ItemType Directory -Force -Path $BinDir, $ReleasesDir, $StateDir | Out
 "" | Set-Content -Path $LogPath -Encoding utf8
 $TempReleaseMetadataPath = Join-Path $InstallBase ([System.IO.Path]::GetRandomFileName() + ".json")
 
-Invoke-WebRequest -Uri $ReleaseMetadataUrl -OutFile $TempReleaseMetadataPath
-$ReleaseMetadata = Get-Content -Raw $TempReleaseMetadataPath | ConvertFrom-Json
+try {
+    Invoke-WebRequest -Uri $ReleaseMetadataUrl -OutFile $TempReleaseMetadataPath
+} catch {
+    Write-HumanFailure `
+        -Category "metadata" `
+        -Reason "发布元数据获取失败。" `
+        -NextStep "检查内网发布入口、网络或版本号后重试。"
+    exit 1
+}
+try {
+    $ReleaseMetadata = Get-Content -Raw $TempReleaseMetadataPath | ConvertFrom-Json
+} catch {
+    Write-HumanFailure `
+        -Category "metadata" `
+        -Reason "发布元数据不是有效 JSON 或字段不完整。" `
+        -NextStep "检查发布元数据后重试，或等待重新发布。"
+    exit 1
+}
 $Tag = $ReleaseMetadata.tag
 $ResolvedVersion = $ReleaseMetadata.bundle_version
 $ReleaseStatusUrl = "$RepoWebBaseUrl/raw/branch/$RepoBranch/releases/$ResolvedVersion/release-status.json"
@@ -72,7 +90,7 @@ try {
     $ReleaseStatus = Get-Content -Raw $TempReleaseStatusPath | ConvertFrom-Json
     if (($ReleaseStatus.default_install_allowed -eq $false) -or ($ReleaseStatus.release_status -eq "postrelease_failed")) {
         Write-HumanFailure `
-            -Category "release_quarantined" `
+            -Category "metadata" `
             -Reason "该版本发布后现场失败，不能作为默认安装版本。" `
             -NextStep "使用默认 stable 入口安装回退版本，或等待下一热修版本。"
         exit 1
@@ -98,12 +116,33 @@ Move-Item -Path $TempReleaseMetadataPath -Destination $ReleaseMetadataPath -Forc
 
 $ArchiveUrl = $ReleaseMetadata.installer_archive_url
 $ExpectedArchiveSha256 = $ReleaseMetadata.installer_archive_sha256
-Invoke-WebRequest -Uri $ArchiveUrl -OutFile $ArchivePath
+try {
+    Invoke-WebRequest -Uri $ArchiveUrl -OutFile $ArchivePath
+} catch {
+    Write-HumanFailure `
+        -Category "network" `
+        -Reason "安装包下载失败。" `
+        -NextStep "检查网络、发布入口或版本号后重试。"
+    exit 1
+}
 $ActualArchiveSha256 = (Get-FileHash -Algorithm SHA256 -Path $ArchivePath).Hash.ToLowerInvariant()
 if ($ActualArchiveSha256 -ne $ExpectedArchiveSha256.ToLowerInvariant()) {
-    throw "checksum mismatch: expected $ExpectedArchiveSha256, got $ActualArchiveSha256"
+    Add-Content -Path $LogPath -Value "checksum mismatch: expected $ExpectedArchiveSha256, got $ActualArchiveSha256" -Encoding utf8
+    Write-HumanFailure `
+        -Category "checksum" `
+        -Reason "安装包校验失败。" `
+        -NextStep "确认发布包未损坏后重试，或等待重新发布。"
+    exit 1
 }
-tar -xzf "$ArchivePath" -C "$ExtractRoot"
+try {
+    tar -xzf "$ArchivePath" -C "$ExtractRoot"
+} catch {
+    Write-HumanFailure `
+        -Category "unknown" `
+        -Reason "安装包解压失败。" `
+        -NextStep "检查日志后重新运行安装入口。"
+    exit 1
+}
 
 @"
 @echo off
@@ -147,13 +186,33 @@ if ([string]::IsNullOrWhiteSpace($CurrentUserPath)) {
     [Environment]::SetEnvironmentVariable("Path", "$BinDir;$CurrentUserPath", "User")
 }
 
+$PreviousReleaseMetadataPath = $env:AI_TEAM_RELEASE_METADATA_PATH
+$env:AI_TEAM_RELEASE_METADATA_PATH = $ReleaseMetadataPath
+$ProjectInstallOutput = & python "$EntrypointPath" install --project-root "$ProjectRoot" 2>&1
+$ProjectInstallExitCode = $LASTEXITCODE
+if ($null -eq $PreviousReleaseMetadataPath) {
+    Remove-Item Env:\AI_TEAM_RELEASE_METADATA_PATH -ErrorAction SilentlyContinue
+} else {
+    $env:AI_TEAM_RELEASE_METADATA_PATH = $PreviousReleaseMetadataPath
+}
+if ($ProjectInstallOutput) {
+    Add-Content -Path $LogPath -Value ($ProjectInstallOutput | Out-String) -Encoding utf8
+}
+if ($ProjectInstallExitCode -ne 0) {
+    Write-HumanFailure `
+        -Category "project_runtime" `
+        -Reason "项目 runtime 接入失败。" `
+        -NextStep "在项目根目录重新运行 ai-team install --project-root `"$ProjectRoot`" 或 repair。"
+    exit 1
+}
+
 Write-HumanSuccess
 } catch {
     if (-not $HumanOutputDone) {
         $Message = $_.Exception.Message
         Add-Content -Path $LogPath -Value $Message -Encoding utf8
         Write-HumanFailure `
-            -Category "bootstrap_failed" `
+            -Category "unknown" `
             -Reason "安装入口执行失败，详细错误已写入日志。" `
             -NextStep "检查网络、权限和发布入口后重试。"
     }
