@@ -3,6 +3,10 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[Console]::OutputEncoding = $Utf8NoBom
+[Console]::InputEncoding = $Utf8NoBom
+$OutputEncoding = $Utf8NoBom
 
 $RepoName = if ($env:REPO_NAME) { $env:REPO_NAME } else { "playground-Version" }
 $RepoBranch = if ($env:REPO_BRANCH) { $env:REPO_BRANCH } else { "main" }
@@ -51,8 +55,6 @@ Move-Item -Path $TempReleaseMetadataPath -Destination $ReleaseMetadataPath -Forc
 
 $ArchiveUrl = $ReleaseMetadata.installer_archive_url
 $ExpectedArchiveSha256 = $ReleaseMetadata.installer_archive_sha256
-$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-
 Invoke-WebRequest -Uri $ArchiveUrl -OutFile $ArchivePath
 $ActualArchiveSha256 = (Get-FileHash -Algorithm SHA256 -Path $ArchivePath).Hash.ToLowerInvariant()
 if ($ActualArchiveSha256 -ne $ExpectedArchiveSha256.ToLowerInvariant()) {
@@ -102,12 +104,11 @@ if ([string]::IsNullOrWhiteSpace($CurrentUserPath)) {
     [Environment]::SetEnvironmentVariable("Path", "$BinDir;$CurrentUserPath", "User")
 }
 
-Write-Host "installed ai-team launcher:"
-Write-Host "- version: $ResolvedVersion"
-Write-Host "- release metadata: $ReleaseMetadataUrl"
-Write-Host "- archive: $ArchiveUrl"
-Write-Host "- launcher: $LauncherPath"
-Write-Host ""
+Write-Host "machine launcher installed"
+Write-Host "version: $ResolvedVersion / $Tag"
+Write-Host "launcher: $LauncherPath"
+Write-Host "project runtime is not installed by this launcher step"
+Write-Host "next: open a project root and run ``ai-team install --project-root .``"
+Write-Host "project runtime ready is only proven after ``ai-team install``"
 Write-Host "user PATH updated with $HOME\.ai-team\bin"
-Write-Host "restart PowerShell, then run:"
-Write-Host "  ai-team install"
+Write-Host "new PowerShell: ai-team install --project-root ."

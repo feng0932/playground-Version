@@ -136,14 +136,11 @@ if ! grep -Fqs "${PATH_EXPORT_LINE}" "${TARGET_RC_FILE}"; then
   } >> "${TARGET_RC_FILE}"
 fi
 
-echo "installed ai-team launcher:"
-echo "- version: ${RESOLVED_VERSION}"
-echo "- release metadata: ${RELEASE_METADATA_URL}"
-echo "- archive: ${ARCHIVE_URL}"
-echo "- launcher: ${LAUNCHER_PATH}"
-echo
+echo "machine launcher installed"
+echo "version: ${RESOLVED_VERSION} / ${TAG}"
+echo "launcher: ${LAUNCHER_PATH}"
+echo "project runtime is not installed by this launcher step"
+echo "next: open a project root and run \`ai-team install --project-root .\`"
+echo "project runtime ready is only proven after \`ai-team install\`"
 echo "PATH entry ensured in: ${TARGET_RC_FILE}"
-echo "for the current shell, run:"
-echo "  export PATH=\"\$HOME/.ai-team/bin:\$PATH\""
-echo "or restart your terminal, then run:"
-echo "  ai-team install"
+echo "current shell: export PATH=\"\$HOME/.ai-team/bin:\$PATH\""
