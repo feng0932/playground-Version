@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "release_tag": "ai-team-bundle-v0.4.8-Hotfix-1",
+  "bundle_version": "v0.4.8-Hotfix-1",
+  "release_status": "postrelease_failed",
+  "stable_eligible": false,
+  "default_install_allowed": false,
+  "quarantine_reason": "postrelease_install_execution_chain_failed",
+  "failure_record": "dev/v0.4.8/21-v0.4.8-Hotfix-1-正式发版后现场失败纠偏与回方案层冻结记录.md",
+  "artifact_problem_summary": "dev/v0.4.8/22-v0.4.8-Hotfix-1-产物问题总结与修正边界.md",
+  "next_repair_plan": "dev/v0.4.8/23-v0.4.8-Hotfix-1-发布后失败回方案层重设方案.md",
+  "safe_default_baseline": "v0.4.7-Hotfix-1",
+  "superseded_by": "pending_next_hotfix"
+}

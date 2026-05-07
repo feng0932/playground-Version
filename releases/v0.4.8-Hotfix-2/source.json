@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "bundle_version": "v0.4.8-Hotfix-2",
+  "release_tag": "ai-team-bundle-v0.4.8-Hotfix-2",
+  "bundle_sha256": "ad8a20b1694c9135bdc59cce7edfac330c03e9ce621cd009deddd3b82ec64059",
+  "source_commit": "2f594d182adb75adeb75e155a8a774603daeb21d"
+}

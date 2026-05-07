@@ -18,6 +18,39 @@ LAUNCHER_PATH="${BIN_DIR}/ai-team"
 STATE_DIR="${INSTALL_BASE}/state"
 MACHINE_STATE_PATH="${STATE_DIR}/machine-install.json"
 INSTALL_HISTORY_PATH="${STATE_DIR}/install-history.jsonl"
+LOG_PATH="${STATE_DIR}/install-ai-team-bootstrap.log"
+HUMAN_OUTPUT_DONE=0
+
+human_failure() {
+  local category="$1"
+  local reason="$2"
+  local next_step="$3"
+  HUMAN_OUTPUT_DONE=1
+  {
+    echo "安装未完成：${category}"
+    echo "原因：${reason}"
+    echo "下一步：${next_step}"
+    echo "日志：${LOG_PATH}"
+  } >&3
+}
+
+human_success() {
+  HUMAN_OUTPUT_DONE=1
+  {
+    echo "安装完成：ai-team ${RESOLVED_VERSION} 已接入当前项目。"
+    echo "下一步：在项目根目录打开 Codex，输入："
+    echo "/总控 请接管当前项目，并授权派发子agent"
+    echo "日志：${LOG_PATH}"
+  } >&3
+}
+
+on_error() {
+  local status="$1"
+  if [[ "${HUMAN_OUTPUT_DONE}" != "1" ]]; then
+    human_failure "bootstrap_failed" "安装入口执行失败，详细错误已写入日志。" "检查网络、权限和发布入口后重试。"
+  fi
+  exit "${status}"
+}
 
 if [[ -n "${AI_TEAM_RELEASE_METADATA_URL:-}" ]]; then
   RELEASE_METADATA_URL="${AI_TEAM_RELEASE_METADATA_URL}"
@@ -29,6 +62,9 @@ else
 fi
 
 mkdir -p "${BIN_DIR}" "${RELEASES_DIR}" "${STATE_DIR}"
+: > "${LOG_PATH}"
+exec 3>&1 >>"${LOG_PATH}" 2>&1
+trap 'on_error $?' ERR
 TMP_RELEASE_METADATA_PATH="$(mktemp "${INSTALL_BASE}/release-metadata.XXXXXX.json")"
 trap 'rm -f "${TMP_RELEASE_METADATA_PATH}"' EXIT
 
@@ -52,6 +88,26 @@ print(
 )
 PY
 )"
+RELEASE_STATUS_URL="${REPO_WEB_BASE_URL}/raw/branch/${REPO_BRANCH}/releases/${RESOLVED_VERSION}/release-status.json"
+TMP_RELEASE_STATUS_PATH="$(mktemp "${INSTALL_BASE}/release-status.XXXXXX.json")"
+if curl -fsSL "${RELEASE_STATUS_URL}" -o "${TMP_RELEASE_STATUS_PATH}"; then
+  STATUS_VERDICT="$(python3 - "${TMP_RELEASE_STATUS_PATH}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+payload = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+allowed = payload.get("default_install_allowed", True)
+status = payload.get("release_status", "")
+print("blocked" if allowed is False or status == "postrelease_failed" else "allowed")
+PY
+)"
+  if [[ "${STATUS_VERDICT}" == "blocked" ]]; then
+    human_failure "release_quarantined" "该版本发布后现场失败，不能作为默认安装版本。" "使用默认 stable 入口安装回退版本，或等待下一热修版本。"
+    exit 1
+  fi
+fi
+rm -f "${TMP_RELEASE_STATUS_PATH}"
 TARGET_DIR="${RELEASES_DIR}/${TAG}"
 RELEASE_METADATA_PATH="${TARGET_DIR}/${TAG}.release.json"
 ARCHIVE_PATH="${TARGET_DIR}/${TAG}.tar.gz"
@@ -136,11 +192,4 @@ if ! grep -Fqs "${PATH_EXPORT_LINE}" "${TARGET_RC_FILE}"; then
   } >> "${TARGET_RC_FILE}"
 fi
 
-echo "machine launcher installed"
-echo "version: ${RESOLVED_VERSION} / ${TAG}"
-echo "launcher: ${LAUNCHER_PATH}"
-echo "project runtime is not installed by this launcher step"
-echo "next: open a project root and run \`ai-team install --project-root .\`"
-echo "project runtime ready is only proven after \`ai-team install\`"
-echo "PATH entry ensured in: ${TARGET_RC_FILE}"
-echo "current shell: export PATH=\"\$HOME/.ai-team/bin:\$PATH\""
+human_success

@@ -21,6 +21,32 @@ $LauncherPath = Join-Path $BinDir "ai-team.cmd"
 $StateDir = Join-Path $InstallBase "state"
 $MachineStatePath = Join-Path $StateDir "machine-install.json"
 $InstallHistoryPath = Join-Path $StateDir "install-history.jsonl"
+$LogPath = Join-Path $StateDir "install-ai-team-bootstrap.log"
+$HumanOutputDone = $false
+$ProgressPreference = "SilentlyContinue"
+
+function Write-HumanFailure {
+    param(
+        [string]$Category,
+        [string]$Reason,
+        [string]$NextStep
+    )
+    $script:HumanOutputDone = $true
+    Write-Host "安装未完成：$Category"
+    Write-Host "原因：$Reason"
+    Write-Host "下一步：$NextStep"
+    Write-Host "日志：$LogPath"
+}
+
+function Write-HumanSuccess {
+    $script:HumanOutputDone = $true
+    Write-Host "安装完成：ai-team $ResolvedVersion 已接入当前项目。"
+    Write-Host "下一步：在项目根目录打开 Codex，输入："
+    Write-Host "/总控 请接管当前项目，并授权派发子agent"
+    Write-Host "日志：$LogPath"
+}
+
+try {
 
 if ($env:AI_TEAM_RELEASE_METADATA_URL) {
     $ReleaseMetadataUrl = $env:AI_TEAM_RELEASE_METADATA_URL
@@ -32,12 +58,29 @@ if ($env:AI_TEAM_RELEASE_METADATA_URL) {
 }
 
 New-Item -ItemType Directory -Force -Path $BinDir, $ReleasesDir, $StateDir | Out-Null
+"" | Set-Content -Path $LogPath -Encoding utf8
 $TempReleaseMetadataPath = Join-Path $InstallBase ([System.IO.Path]::GetRandomFileName() + ".json")
 
 Invoke-WebRequest -Uri $ReleaseMetadataUrl -OutFile $TempReleaseMetadataPath
 $ReleaseMetadata = Get-Content -Raw $TempReleaseMetadataPath | ConvertFrom-Json
 $Tag = $ReleaseMetadata.tag
 $ResolvedVersion = $ReleaseMetadata.bundle_version
+$ReleaseStatusUrl = "$RepoWebBaseUrl/raw/branch/$RepoBranch/releases/$ResolvedVersion/release-status.json"
+$TempReleaseStatusPath = Join-Path $InstallBase ([System.IO.Path]::GetRandomFileName() + ".release-status.json")
+try {
+    Invoke-WebRequest -Uri $ReleaseStatusUrl -OutFile $TempReleaseStatusPath
+    $ReleaseStatus = Get-Content -Raw $TempReleaseStatusPath | ConvertFrom-Json
+    if (($ReleaseStatus.default_install_allowed -eq $false) -or ($ReleaseStatus.release_status -eq "postrelease_failed")) {
+        Write-HumanFailure `
+            -Category "release_quarantined" `
+            -Reason "该版本发布后现场失败，不能作为默认安装版本。" `
+            -NextStep "使用默认 stable 入口安装回退版本，或等待下一热修版本。"
+        exit 1
+    }
+} catch {
+} finally {
+    if (Test-Path $TempReleaseStatusPath) { Remove-Item $TempReleaseStatusPath -Force }
+}
 $TargetDir = Join-Path $ReleasesDir $Tag
 $ReleaseMetadataPath = Join-Path $TargetDir "$Tag.release.json"
 $ArchivePath = Join-Path $TargetDir "$Tag.tar.gz"
@@ -104,11 +147,15 @@ if ([string]::IsNullOrWhiteSpace($CurrentUserPath)) {
     [Environment]::SetEnvironmentVariable("Path", "$BinDir;$CurrentUserPath", "User")
 }
 
-Write-Host "machine launcher installed"
-Write-Host "version: $ResolvedVersion / $Tag"
-Write-Host "launcher: $LauncherPath"
-Write-Host "project runtime is not installed by this launcher step"
-Write-Host "next: open a project root and run ``ai-team install --project-root .``"
-Write-Host "project runtime ready is only proven after ``ai-team install``"
-Write-Host "user PATH updated with $HOME\.ai-team\bin"
-Write-Host "new PowerShell: ai-team install --project-root ."
+Write-HumanSuccess
+} catch {
+    if (-not $HumanOutputDone) {
+        $Message = $_.Exception.Message
+        Add-Content -Path $LogPath -Value $Message -Encoding utf8
+        Write-HumanFailure `
+            -Category "bootstrap_failed" `
+            -Reason "安装入口执行失败，详细错误已写入日志。" `
+            -NextStep "检查网络、权限和发布入口后重试。"
+    }
+    exit 1
+}
