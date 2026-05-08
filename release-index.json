@@ -29,6 +29,12 @@
       "release_tag": "ai-team-bundle-v0.4.8-Hotfix-5",
       "bundle_sha256": "b1ab19cc657976cab61605300ef2f8438167a1007fe48b9cc6f31f181bcff683",
       "source_commit": "65c1d0dd8a33f60a3676d5363a73b7fa94c128c0"
+    },
+    "v0.4.8-Hotfix-6": {
+      "bundle_version": "v0.4.8-Hotfix-6",
+      "release_tag": "ai-team-bundle-v0.4.8-Hotfix-6",
+      "bundle_sha256": "ad67caff0826f737a0bbee8672ae431ff5e55b694f6e923fb19ffcee73211843",
+      "source_commit": "2e94d79bc5901421bf9fe5cd77d80ef04e4f30aa"
     }
   }
 }

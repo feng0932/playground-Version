@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_repo": "Playground-English",
+  "source_branch": "main",
+  "source_commit": "2e94d79bc5901421bf9fe5cd77d80ef04e4f30aa",
+  "bundle_version": "v0.4.8-Hotfix-6",
+  "release_tag": "ai-team-bundle-v0.4.8-Hotfix-6",
+  "bundle_sha256": "ad67caff0826f737a0bbee8672ae431ff5e55b694f6e923fb19ffcee73211843",
+  "installer_archive_sha256": "7978cc6aaf4fa7fc72c2f4e122181adbb5283ddf1f132321a05240bb30d90005",
+  "exported_at": "2026-05-08T12:40:20.763254Z"
+}
