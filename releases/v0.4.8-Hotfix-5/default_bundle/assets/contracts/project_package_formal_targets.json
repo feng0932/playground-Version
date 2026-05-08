@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "contract_id": "project_package_formal_targets",
+  "targets": [
+    {
+      "logical_id": "project_business_brief",
+      "template_source": "assets/project_skeleton/00-项目包模板/01-项目商业说明.md",
+      "project_target": "00-项目包/01-项目商业说明.md",
+      "required": true,
+      "owner_agent": "01-编排-初始化项目包",
+      "receipt_field": "project_business_brief",
+      "probe_field": "has_project_baseline_01",
+      "downstream_consumers": ["00", "01", "10", "PRD upstream context", "release verifier"]
+    },
+    {
+      "logical_id": "user_profile_and_permission_architecture",
+      "template_source": "assets/project_skeleton/00-项目包模板/02-用户画像与权限架构.md",
+      "project_target": "00-项目包/02-用户画像与权限架构.md",
+      "required": true,
+      "owner_agent": "01-编排-初始化项目包",
+      "receipt_field": "user_profile_and_permission_architecture",
+      "probe_field": "has_project_baseline_02",
+      "downstream_consumers": ["00", "01", "10", "PRD upstream context", "release verifier"]
+    },
+    {
+      "logical_id": "system_topology_and_core_terms",
+      "template_source": "assets/project_skeleton/00-项目包模板/03-系统拓扑与核心名词表.md",
+      "project_target": "00-项目包/03-系统拓扑与核心名词表.md",
+      "required": true,
+      "owner_agent": "01-编排-初始化项目包",
+      "receipt_field": "system_topology_and_core_terms",
+      "probe_field": "has_project_baseline_03",
+      "downstream_consumers": ["00", "01", "10", "PRD upstream context", "release verifier"]
+    },
+    {
+      "logical_id": "pre_development_compliance_appendix",
+      "template_source": "assets/project_skeleton/00-项目包模板/04-开发前合规附录.md",
+      "project_target": "00-项目包/04-开发前合规附录.md",
+      "required": true,
+      "owner_agent": "01-编排-初始化项目包",
+      "receipt_field": "pre_development_compliance_appendix",
+      "probe_field": "has_project_baseline_04",
+      "downstream_consumers": ["00", "01", "10", "PRD upstream context", "release verifier"]
+    },
+    {
+      "logical_id": "project_prototype_and_hifi_standard",
+      "template_source": "assets/project_skeleton/00-项目包模板/05-项目级原型与高保真标准.md",
+      "project_target": "00-项目包/05-项目级原型与高保真标准.md",
+      "required": true,
+      "owner_agent": "01-编排-初始化项目包",
+      "receipt_field": "project_prototype_and_hifi_standard",
+      "probe_field": "has_project_baseline_05",
+      "downstream_consumers": ["00", "01", "10", "PRD upstream context", "release verifier"]
+    },
+    {
+      "logical_id": "product_shared_asset_base",
+      "template_source": "assets/project_skeleton/00-项目包模板/06-产品级共享资产底座.md",
+      "project_target": "00-项目包/06-产品级共享资产底座.md",
+      "required": true,
+      "owner_agent": "01-编排-初始化项目包",
+      "receipt_field": "product_shared_asset_base",
+      "probe_field": "has_project_baseline_06",
+      "downstream_consumers": ["00", "01", "10", "PRD upstream context", "release verifier"]
+    }
+  ]
+}
